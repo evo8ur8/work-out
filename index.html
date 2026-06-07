@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Recomp Rebuild Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+  :root {
+    --bg:#0d0d0f; --surface:#151518; --surface2:#1c1c21; --border:#2a2a32;
+    --accent:#e8ff47; --accent2:#ff6b35; --accent3:#47d4ff;
+    --text:#f0f0f0; --muted:#6b6b7a; --danger:#ff4757; --success:#2ecc71;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;max-width:430px;margin:0 auto;overflow-x:hidden}
+
+  /* HEADER */
+  .hdr{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 20px 12px;display:flex;align-items:center;justify-content:space-between}
+  .hdr-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent)}
+  .wk-badge{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;color:var(--muted)}
+  .wk-badge span{color:var(--text)}
+
+  /* WEEK NAV */
+  .wk-nav{display:flex;align-items:center;justify-content:center;gap:16px;padding:12px 20px;border-bottom:1px solid var(--border)}
+  .wk-dots{display:flex;gap:6px}
+  .wk-dot{width:28px;height:6px;border-radius:3px;background:var(--border);cursor:pointer;transition:background .2s}
+  .wk-dot.active{background:var(--accent)}
+  .wk-dot.done{background:var(--success);opacity:.7}
+  .nav-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:18px;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+  /* DAY PILLS */
+  .day-scroll{display:flex;gap:8px;padding:12px 20px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
+  .day-scroll::-webkit-scrollbar{display:none}
+  .day-pill{flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);transition:all .15s;white-space:nowrap}
+  .day-pill.active{background:var(--accent);color:#0d0d0f;border-color:var(--accent)}
+  .day-pill.done{border-color:var(--success);color:var(--success)}
+  .day-pill.rest{border-style:dashed}
+
+  /* CONTENT */
+  .content{padding:0 20px 110px}
+  .day-hdr{padding:20px 0 6px;display:flex;align-items:flex-start;justify-content:space-between}
+  .day-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;line-height:1}
+  .day-sub{font-size:13px;color:var(--muted);margin-top:4px;font-weight:300}
+
+  /* RING */
+  .ring-wrap{position:relative;width:52px;height:52px;flex-shrink:0}
+  .ring-svg{transform:rotate(-90deg)}
+  .ring-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+
+  /* STAT GRID */
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+  .stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px}
+  .stat-val{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--accent)}
+  .stat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+  .prog-wrap{background:var(--border);border-radius:4px;height:6px;margin-top:10px;overflow:hidden}
+  .prog-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .4s}
+
+  /* SECTION LABEL */
+  .sec-lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+  .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+  /* EXERCISE ROW */
+  .ex-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .15s;user-select:none;margin-bottom:6px}
+  .ex-row.checked{background:rgba(232,255,71,.06);border-color:rgba(232,255,71,.3)}
+  .ex-row:active{transform:scale(.98)}
+  .chk-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all .15s}
+  .ex-row.checked .chk-box{background:var(--accent);border-color:var(--accent)}
+  .chk-icon{display:none;font-size:13px;color:#0d0d0f;font-weight:900}
+  .ex-row.checked .chk-icon{display:block}
+  .ex-info{flex:1;min-width:0}
+  .ex-name{font-size:15px;font-weight:500;transition:color .15s}
+  .ex-row.checked .ex-name{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(232,255,71,.4)}
+  .ex-meta{font-size:12px;color:var(--accent2);margin-top:2px;font-weight:500}
+  .ex-detail{font-size:12px;color:var(--muted);margin-top:2px;font-weight:300}
+
+  /* HOW TO PANEL */
+  .howto-btn{font-size:11px;color:var(--accent3);margin-top:6px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-weight:600;letter-spacing:.3px;border:none;background:none;padding:0}
+  .howto-panel{display:none;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-top:8px}
+  .howto-panel.open{display:block}
+  .howto-panel p{font-size:13px;color:var(--text);line-height:1.7;margin-bottom:8px}
+  .howto-panel p:last-child{margin-bottom:0}
+  .howto-panel strong{color:var(--accent);font-weight:600}
+  .howto-panel .feel{background:rgba(232,255,71,.07);border-left:3px solid var(--accent);padding:8px 10px;border-radius:0 6px 6px 0;font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6}
+  .howto-panel .band-note{background:rgba(71,212,255,.07);border-left:3px solid var(--accent3);padding:8px 10px;border-radius:0 6px 6px 0;font-size:12px;color:var(--accent3);margin-top:8px;line-height:1.6}
+
+  /* SET DOTS */
+  .set-dots{display:flex;gap:4px;flex-shrink:0;padding-top:4px}
+  .set-dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .15s}
+  .set-dot.done{background:var(--accent)}
+
+  /* ENERGY */
+  .energy-bar{display:flex;gap:8px;margin:12px 0 18px}
+  .energy-lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .energy-btn{flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit}
+
+  /* CARDIO */
+  .cardio-row{padding:12px 14px;background:var(--surface);border:1.5px solid var(--accent3);border-radius:12px;display:flex;align-items:center;justify-content:space-between;margin-top:6px;cursor:pointer}
+  .cardio-lbl{font-size:14px;font-weight:500;color:var(--accent3)}
+  .cardio-sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .cardio-chk{width:22px;height:22px;border-radius:6px;border:2px solid var(--accent3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+  .cardio-chk.done{background:var(--accent3)}
+
+  /* PERF LOG */
+  .perf-box{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-top:8px}
+  .perf-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .perf-row:last-child{margin-bottom:0}
+  .perf-key{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+  .diff-slider{-webkit-appearance:none;appearance:none;width:130px;height:6px;border-radius:3px;background:var(--border);outline:none;cursor:pointer;accent-color:var(--accent)}
+  .diff-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer}
+  .diff-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);min-width:24px;text-align:right}
+  .effort-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .effort-btn{padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  .effort-btn.sel{background:rgba(232,255,71,.15);border-color:var(--accent);color:var(--accent)}
+  .win-input{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:14px;padding:8px 12px;width:100%;margin-top:10px;outline:none}
+  .win-input:focus{border-color:var(--accent)}
+  .win-input::placeholder{color:var(--muted)}
+
+  /* REST */
+  .rest-card{margin-top:24px;padding:32px 20px;text-align:center;background:var(--surface);border:1.5px solid var(--border);border-radius:16px}
+
+  /* TIP */
+  .tip-box{background:rgba(71,212,255,.07);border:1px solid rgba(71,212,255,.2);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--accent3);margin-top:12px;line-height:1.6}
+
+  /* BAND LEGEND */
+  .band-legend{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-top:8px}
+  .band-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .band-row:last-child{margin-bottom:0}
+  .band-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+  .band-info{font-size:12px;line-height:1.5}
+  .band-name{font-weight:600;color:var(--text)}
+  .band-use{color:var(--muted);font-weight:300}
+
+  /* BOTTOM BAR */
+  .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:12px 20px 24px;background:linear-gradient(to top,var(--bg) 70%,transparent);display:flex;gap:10px}
+  .btn-primary{flex:1;padding:14px;border-radius:12px;background:var(--accent);color:#0d0d0f;font-family:inherit;font-size:14px;font-weight:700;border:none;cursor:pointer}
+  .btn-secondary{padding:14px 18px;border-radius:12px;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+
+  /* TOAST */
+  .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:500;color:var(--text);opacity:0;pointer-events:none;transition:all .25s;z-index:200;white-space:nowrap}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="hdr">
+  <div class="hdr-title">RECOMP REBUILD</div>
+  <div class="wk-badge">Week <span id="hdr-wk">1</span> of 8</div>
+</div>
+
+<div class="wk-nav">
+  <button class="nav-btn" id="btn-pw">‹</button>
+  <div class="wk-dots" id="wk-dots"></div>
+  <button class="nav-btn" id="btn-nw">›</button>
+</div>
+
+<div class="day-scroll" id="day-pills"></div>
+<div class="content" id="content"></div>
+
+<div class="bottom-bar">
+  <button class="btn-secondary" id="btn-pd">← Back</button>
+  <button class="btn-primary" id="btn-nd">Next Day →</button>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────
+const DAYS = [
+{
+  id:1, label:'Day 1', title:'LOWER BODY', subtitle:'Glutes + Legs', color:'#e8ff47',
+  sections:[
+    { name:'Warm-Up', exercises:[
+      { name:'Vibration Plate', meta:'5 min', sets:0,
+        how:'Stand on the vibration plate for 5 minutes to warm up joints and activate muscles. You can do light squats or just stand still. This primes your glutes and legs before the main work.',
+        feel:'Light vibration — just warm-up, no intensity needed here.',
+        band:null }
+    ]},
+    { name:'Main Work', exercises:[
+      { name:'Goblet Squat', meta:'4 sets × 12–15 reps · 8lb DB', sets:4,
+        how:'Hold one 8lb dumbbell vertically at your chest with both hands. Feet shoulder-width apart, toes slightly out. Push your knees OUT against the loop band as you sit back and down — go as deep as you comfortably can. Drive through your heels to stand up. <strong>3 seconds down, 1 second pause at the bottom, then up.</strong>',
+        feel:'You should feel your quads burning and glutes engaging equally. Last 3–5 reps should feel like a slow grind.',
+        band:'Loop band above knees — medium or heavy. The band should create noticeable resistance when you push your knees out. If your knees are caving inward instead of pushing out, the band is too heavy — go lighter.' },
+      { name:'Hip Thrust (Bench)', meta:'4 sets × 15–20 reps · 8lb DB', sets:4,
+        how:'Sit on the floor with your upper back against the edge of the flat bench. Place both 8lb dumbbells or just one on your hip bones, hold them in place. Feet flat on floor, about hip-width apart. Drive your hips straight UP toward the ceiling, squeezing your glutes HARD at the top. <strong>Hold the top 2–3 seconds every rep.</strong> Lower slowly.',
+        feel:'Your glutes should do 90% of the work. If you feel it mostly in your lower back, your feet are too close to your body — push them slightly further out.',
+        band:'Loop band just above your knees — medium or heavy. The band adds extra glute activation by forcing your knees slightly apart at the top.' },
+      { name:'Reverse Lunges', meta:'3 sets × 10 reps each leg · 5–8lb DBs', sets:3,
+        how:'Stand tall holding a dumbbell in each hand. Step one foot BACK — far enough that your front knee stays over your ankle, not past your toes. Lower your back knee toward the floor with control. <strong>2–3 seconds on the way down.</strong> Push through your front heel to return to standing. Do all reps on one leg, then switch.',
+        feel:'Your front leg should be doing all the work — glute and quad of the front leg burning. Back leg is just for balance and stretch.',
+        band:null },
+      { name:'Romanian Deadlift', meta:'3 sets × 12–15 reps · 8lb DBs', sets:3,
+        how:'Stand holding both dumbbells in front of your thighs. Slight bend in your knees — keep it there the whole time. Push your hips BACK like you\'re trying to touch the wall behind you, letting the dumbbells slide down your legs close to your body. Go until you feel a strong stretch in your hamstrings, then squeeze your glutes and drive your hips forward to stand back up.',
+        feel:'You should feel a deep stretch in your hamstrings on the way down, then your glutes squeezing hard at the top. If you feel it in your lower back, you\'re rounding — keep your chest up.',
+        band:null },
+      { name:'Band Side Steps', meta:'3 sets × 15 steps each way', sets:3,
+        how:'Place the loop band just above your knees or around your ankles (above knees is easier, ankles are harder). Stand with feet hip-width apart in a slight squat position — stay low the whole time. Step sideways, keeping tension on the band the entire time. Never let your feet come completely together.',
+        feel:'Burning in the side of your glutes (outer glutes) within 10–15 steps. If you feel nothing, the band is too light or you\'re standing too upright.',
+        band:'Loop band above knees (medium) or around ankles (heavy). Keep constant tension — never let the band go slack.' },
+      { name:'Calf Raises', meta:'3 sets × 20 reps · bodyweight', sets:3,
+        how:'Stand with feet hip-width apart, hands lightly on a wall or bench for balance. Rise up onto the balls of your feet as HIGH as you can go. <strong>Hold the top 2 seconds.</strong> Lower slowly and fully — let your heels drop below the step if you can for extra range.',
+        feel:'Deep burn in your calves. If it feels easy, slow down the lowering phase to 3–4 seconds.',
+        band:null }
+    ]}
+  ],
+  cardio:{ label:'Treadmill Incline Walk', detail:'10–15 min · incline 8–12 · moderate pace' }
+},
+{
+  id:2, label:'Day 2', title:'PUSH', subtitle:'Chest / Shoulders / Triceps', color:'#ff6b35',
+  sections:[
+    { name:'Main Work', exercises:[
+      { name:'Flat Bench DB Press', meta:'4 sets × 12–15 reps · 8lb DBs', sets:4,
+        how:'Lie flat on the bench, a dumbbell in each hand. Start with DBs at chest level, elbows at about 45 degrees from your body — not flared straight out. Press up until arms are nearly extended, then lower <strong>3 seconds back down</strong> until you feel a stretch across your chest. This deeper range is what makes a bench press better than a floor press.',
+        feel:'Stretch across your chest at the bottom, contraction in your chest at the top. Your arms should fatigue AFTER your chest — if your triceps give out first, the weight is too heavy.',
+        band:null },
+      { name:'Shoulder Press', meta:'3 sets × 10–12 reps · 5–8lb DBs', sets:3,
+        how:'Sit upright on the bench, core tight — do not lean back. Hold dumbbells at shoulder height, palms facing forward. Press straight up until arms are almost fully extended, then lower slowly back to shoulder height. <strong>No leaning back or using momentum.</strong>',
+        feel:'Shoulders burning mid-set, core working to keep you upright. If you\'re leaning back it means the weight is too heavy — drop to 5lb.',
+        band:null },
+      { name:'Push-ups', meta:'3 sets × near failure · floor or elevated', sets:3,
+        how:'Hands slightly wider than shoulder-width. Body in a straight line from head to heels — no sagging hips. Lower your chest all the way to the floor (or bench if elevated), then press back up. <strong>Elevated = hands on bench (easier). Floor = harder.</strong> Last reps should be slow and shaky — that\'s the goal.',
+        feel:'Chest, shoulders, and triceps all working together. Stop the set when you can no longer maintain form.',
+        band:null },
+      { name:'Lateral Raises', meta:'3 sets × 15–20 reps · 5lb DBs ONLY', sets:3,
+        how:'Stand or sit, 5lb dumbbell in each hand, arms at your sides. Raise both arms out to the sides simultaneously until they reach shoulder height — no higher. <strong>Slow and controlled — 2 seconds up, 2 seconds down.</strong> Your thumbs should be slightly lower than your pinkies at the top (like pouring water out of a pitcher).',
+        feel:'Deep burn in the side of your shoulders by rep 10–15. This is one of those exercises where 5lb feels heavier than you expect when done right. Never swing the weight up.',
+        band:null },
+      { name:'Band Triceps Extensions', meta:'3 sets × 15–20 reps', sets:3,
+        how:'Anchor the loop band overhead — loop it over a door at the top, or hold both ends yourself. Face away from the anchor. Hold the band with both hands behind your head, elbows pointing up toward the ceiling. <strong>Keep elbows locked in place</strong> — only your forearms move. Extend your arms straight down/forward until fully extended, then slowly return.',
+        feel:'Burn directly in the back of your upper arms (triceps). If your elbows are moving, you\'re using too much momentum.',
+        band:'Loop band anchored above head. Use light-to-medium resistance — you need to be able to complete 15–20 reps with strict form.' }
+    ]}
+  ],
+  cardio:{ label:'Treadmill Incline Walk', detail:'15 min · incline 8–10' }
+},
+{
+  id:3, label:'Day 3', title:'RECOVERY', subtitle:'Active Rest', color:'#47d4ff',
+  recovery:[
+    { label:'🚴 Bike', detail:'25–30 min steady · conversational pace' },
+    { label:'🚶 Treadmill Incline Walk', detail:'30–40 min · incline 6–10' },
+    { label:'🚣 Row Machine', detail:'15–20 min easy · focus on form' },
+    { label:'🟣 Vibration Plate (optional)', detail:'5–10 min · stand or light squats' },
+    { label:'Stretch', detail:'Hips, hamstrings, chest · hold each 30–60 sec' }
+  ]
+},
+{
+  id:4, label:'Day 4', title:'PULL', subtitle:'Back + Biceps', color:'#e8ff47',
+  sections:[
+    { name:'Main Work', exercises:[
+      { name:'Chest-Supported DB Row', meta:'4 sets × 12–15 reps · 8lb DBs', sets:4,
+        how:'Set the flat bench horizontal. Lie face-down on it — chest on the bench, arms hanging straight down toward the floor, a dumbbell in each hand. Pull both dumbbells up toward your ribcage, driving your elbows back. <strong>Squeeze your shoulder blades together hard at the top and hold 1 second.</strong> Lower slowly.',
+        feel:'Deep burn in the middle of your back between your shoulder blades. This position removes lower back strain completely — your back muscles do ALL the work. If you feel it in your biceps more than your back, focus on driving your elbows rather than pulling with your hands.',
+        band:null },
+      { name:'Reverse Flys', meta:'3 sets × 15 reps · 5lb DBs', sets:3,
+        how:'Same chest-on-bench position as the row. Arms hang down, slight bend in your elbows. Raise both arms out to the sides like you\'re spreading wings — stop at shoulder height. <strong>Squeeze your shoulder blades together at the top.</strong> Lower slowly.',
+        feel:'Burning in your rear shoulders and upper back. This targets the back of your shoulder which most people neglect — it will improve your posture significantly.',
+        band:null },
+      { name:'Bicep Curls', meta:'3 sets × 12–15 reps · 5–8lb DBs', sets:3,
+        how:'Stand or sit, dumbbells at your sides, palms facing forward. Curl both dumbbells up toward your shoulders. At the top, squeeze your biceps hard. <strong>Lower in exactly 3 seconds</strong> — this slow lowering (eccentric) is the most important part for muscle growth.',
+        feel:'Biceps burning on the way up, deep stretch at the bottom. If you\'re swinging your body to curl the weight, go to 5lb.',
+        band:null },
+      { name:'Band Lat Pulldown', meta:'3 sets × 12–15 reps', sets:3,
+        how:'Loop the band over a high anchor point — top of a door works well. Kneel or sit on the floor facing the anchor. Hold both sides of the loop band with arms extended overhead. Pull the band down by driving your elbows DOWN and BACK toward your hips — like you\'re trying to put your elbows in your back pockets. <strong>Squeeze at the bottom, then slowly extend back up.</strong>',
+        feel:'Burning under your armpits and in your upper back (lats). This builds the wide part of your back. Focus on elbows down — not hands down.',
+        band:'Loop band anchored overhead. Use medium or heavy resistance — you should feel it by rep 8. If you can do 20+ reps easily, the band is too light.' }
+    ]}
+  ],
+  cardio:{ label:'Row Machine', detail:'10–15 min moderate · focus on full pulls' }
+},
+{
+  id:5, label:'Day 5', title:'FULL BODY', subtitle:'Rebuild Circuit', color:'#ff6b35',
+  sections:[
+    { name:'Warm-Up', exercises:[
+      { name:'Vibration Plate', meta:'5 min', sets:0,
+        how:'5 minutes on the vibration plate to warm up the whole body before the circuit. Light movement — shift your weight, do small squats.',
+        feel:'Just a warm-up — light activation only.',
+        band:null }
+    ]},
+    { name:'Circuit · 3–4 Rounds · Rest 60–90 sec between rounds', exercises:[
+      { name:'Goblet Squat (banded)', meta:'12 reps per round · 8lb DB', sets:0,
+        how:'Same as Day 1 goblet squat. Hold 8lb dumbbell at chest, feet shoulder-width, push knees OUT against the loop band. 3 seconds down, controlled up. Focus on quality — this is a circuit so pace yourself.',
+        feel:'Quads and glutes equally loaded. By round 3–4 this will feel significantly harder than round 1.',
+        band:'Loop band above knees — medium or heavy.' },
+      { name:'Bench DB Press', meta:'10–12 reps per round · 8lb DBs', sets:0,
+        how:'Lie flat on bench, dumbbells at chest, press up and lower slowly. <strong>3 seconds down every rep.</strong> In a circuit your chest will be pre-fatigued by round 3 — that\'s the point.',
+        feel:'Chest stretch at the bottom, contraction at the top. Last reps of each round should be a struggle.',
+        band:null },
+      { name:'Chest-Supported Row', meta:'12–15 reps per round · 8lb DBs', sets:0,
+        how:'Lie face-down on the bench, pull dumbbells to your ribcage, squeeze shoulder blades. Strict form — no momentum in a circuit. The chest support means you can\'t cheat.',
+        feel:'Mid-back burning. Keep the squeeze at the top consistent every rep.',
+        band:null },
+      { name:'Hip Thrust (Bench)', meta:'15–20 reps per round · 8lb DB', sets:0,
+        how:'Upper back on bench, drive hips up, 2-second squeeze at the top every rep. In a circuit your glutes will be fatigued from the squats — push through. This is where the real growth happens.',
+        feel:'Glutes fully on fire by round 2–3. If you feel it in your lower back, check your foot position.',
+        band:'Loop band above knees — heavy.' },
+      { name:'Plank', meta:'30–45 sec per round · bodyweight', sets:0,
+        how:'Forearms on the ground, elbows under shoulders. Body in a straight line — squeeze your core, glutes, and thighs all at once. <strong>Do not let your hips sag or rise up.</strong> Breathe steadily.',
+        feel:'Core braced hard, slight shaking is normal and good. If your lower back hurts, drop to your knees.',
+        band:null }
+    ]}
+  ],
+  cardio:{ label:'Treadmill Incline Walk', detail:'10–15 min · cool-down pace' }
+},
+{
+  id:6, label:'Day 6', title:'CONDITIONING', subtitle:'Cardio + Core', color:'#47d4ff',
+  sections:[
+    { name:'Core Circuit · 3 Rounds', exercises:[
+      { name:'Plank', meta:'3 sets × 30–45 sec', sets:3,
+        how:'Forearms on floor, elbows under shoulders. Body flat — squeeze everything. Breathe steadily. Hold the full time even when it burns.',
+        feel:'Core and glutes burning. Shaking is fine.',
+        band:null },
+      { name:'Dead Bug', meta:'3 sets × 10 reps each side', sets:3,
+        how:'Lie on your back, arms straight up toward ceiling, knees bent at 90 degrees in the air (like a tabletop). <strong>Press your lower back INTO the floor — keep it there the whole time.</strong> Slowly lower your right arm overhead AND your left leg toward the floor simultaneously. Return and switch sides. That\'s one rep each side.',
+        feel:'Deep core working to keep your back pressed down. If your back lifts off the floor, you\'ve gone too far — reduce range of motion.',
+        band:null },
+      { name:'Bicycle Crunch', meta:'3 sets × 12–15 reps each side', sets:3,
+        how:'Lie on your back, hands behind your head lightly (don\'t pull your neck). Lift both feet off the ground, knees bent. Bring your right elbow toward your left knee while extending your right leg. Rotate the other way. <strong>Slow and controlled — focus on the rotation, not speed.</strong>',
+        feel:'Obliques (sides of your core) burning. Slow reps are 10x more effective than fast ones here.',
+        band:null },
+      { name:'Side Plank', meta:'3 sets × 20–30 sec each side', sets:3,
+        how:'Lie on your side, forearm on the ground, elbow under your shoulder. Stack your feet or stagger them for balance. Lift your hips off the ground so your body is a straight diagonal line. Hold.',
+        feel:'Outside of your core (obliques) working hard. If it\'s too hard, drop your bottom knee to the ground.',
+        band:null }
+    ]}
+  ],
+  cardio:{ label:'Bike / Row / Walk', detail:'25–35 min steady state · conversational pace' }
+},
+{
+  id:7, label:'Day 7', title:'REST', subtitle:'Recover & Refuel', color:'#6b6b7a',
+  rest:true,
+  restChecks:['🚶 Light walk (10–20 min optional)','🧘 Stretch — hips, hamstrings, chest','🥩 Hit protein goal (160–180g)','💧 Stay hydrated all day']
+}
+];
+
+const WEEK_TIPS = [
+  'Learn the tempo. Feel every rep. Establish the mind-muscle connection.',
+  'Add 1 extra set to your main lifts. Slow the tempo even more — 4 sec down.',
+  'Add a stronger loop band OR cut rest time. Push your sets closer to failure.',
+  'Add burnout sets — last set of each exercise goes to near failure, then 5 slow pulses.'
+];
+
+const SK = 'recomp_v4';
+let ST = (() => { try { const r=localStorage.getItem(SK); if(r) return JSON.parse(r); } catch{} return {week:1,day:1,weeks:{}}; })();
+const emptyDay = () => ({exercises:{},sets:{},energy:null,difficulty:5,effort:null,win:'',cardio:false,restChecks:{},recovery:{}});
+const getKey = (w,d) => `w${w}d${d}`;
+const getDayData = (w,d) => { const k=getKey(w,d); if(!ST.weeks[k]) ST.weeks[k]=emptyDay(); return ST.weeks[k]; };
+const save = () => { try { localStorage.setItem(SK,JSON.stringify(ST)); } catch{} };
+
+function isDayComplete(w,d) {
+  const df=DAYS[d-1], data=getDayData(w,d);
+  if(df.rest) return (df.restChecks||[]).every((_,i)=>data.restChecks[i]);
+  if(df.recovery) return Object.values(data.recovery).some(Boolean);
+  const all=(df.sections||[]).flatMap(s=>s.exercises).filter(e=>e.name!=='Vibration Plate');
+  return all.length>0 && all.every(e=>data.exercises[e.name]);
+}
+
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────
+function render() {
+  document.getElementById('hdr-wk').textContent=ST.week;
+  renderWeekDots();
+  renderDayPills();
+  renderContent();
+}
+
+function renderWeekDots() {
+  const el=document.getElementById('wk-dots'); el.innerHTML='';
+  for(let w=1;w<=8;w++){
+    const d=document.createElement('div');
+    d.className='wk-dot';
+    if(w===ST.week) d.classList.add('active');
+    else if([1,2,3,4,5,6,7].every(dd=>isDayComplete(w,dd))) d.classList.add('done');
+    d.onclick=()=>{ST.week=w;ST.day=1;save();render();};
+    el.appendChild(d);
+  }
+}
+
+function renderDayPills() {
+  const el=document.getElementById('day-pills'); el.innerHTML='';
+  DAYS.forEach((df,i)=>{
+    const d=i+1, done=isDayComplete(ST.week,d), active=d===ST.day;
+    const p=document.createElement('div');
+    p.className='day-pill'+(df.rest?' rest':'')+(active?' active':done?' done':'');
+    p.textContent=df.label+(done&&!active?' ✓':'');
+    p.onclick=()=>{ST.day=d;save();render();window.scrollTo({top:0,behavior:'smooth'});};
+    el.appendChild(p);
+  });
+  setTimeout(()=>{
+    const a=el.querySelector('.day-pill.active');
+    if(a) a.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  },60);
+}
+
+function renderContent() {
+  const def=DAYS[ST.day-1], data=getDayData(ST.week,ST.day), el=document.getElementById('content');
+  el.innerHTML='';
+  const allEx=(def.sections||[]).flatMap(s=>s.exercises).filter(e=>e.name!=='Vibration Plate');
+  const doneEx=allEx.filter(e=>data.exercises[e.name]).length;
+  const pct=def.rest
+    ? (def.restChecks||[]).filter((_,i)=>data.restChecks[i]).length/(def.restChecks?.length||1)
+    : def.recovery ? (Object.values(data.recovery).some(Boolean)?1:0)
+    : allEx.length ? doneEx/allEx.length : 0;
+  const weekDone=[1,2,3,4,5,6,7].filter(d=>isDayComplete(ST.week,d)).length;
+  const r=22, circ=2*Math.PI*r;
+
+  // Header
+  el.innerHTML+=`<div class="day-hdr">
+    <div>
+      <div class="day-title" style="color:${def.color}">${def.title}</div>
+      <div class="day-sub">${def.subtitle}</div>
+    </div>
+    <div class="ring-wrap">
+      <svg class="ring-svg" width="52" height="52">
+        <circle cx="26" cy="26" r="${r}" fill="none" stroke="#2a2a32" stroke-width="4"/>
+        <circle cx="26" cy="26" r="${r}" fill="none" stroke="${def.color}" stroke-width="4"
+          stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${circ-pct*circ}"
+          style="transition:stroke-dashoffset .4s"/>
+      </svg>
+      <div class="ring-text">${Math.round(pct*100)}%</div>
+    </div>
+  </div>`;
+
+  // Stats
+  el.innerHTML+=`<div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-val">${weekDone}/7</div>
+      <div class="stat-lbl">Week ${ST.week} Days</div>
+      <div class="prog-wrap"><div class="prog-fill" style="width:${(weekDone/7)*100}%"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:${def.color}">${doneEx}/${allEx.length||(def.restChecks?.length||0)}</div>
+      <div class="stat-lbl">Today Done</div>
+      <div class="prog-wrap"><div class="prog-fill" style="width:${pct*100}%;background:${def.color}"></div></div>
+    </div>
+  </div>`;
+
+  // REST DAY
+  if(def.rest){
+    el.innerHTML+=`<div class="rest-card">
+      <div style="font-size:48px;margin-bottom:12px">😴</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:#6b6b7a">REST DAY</div>
+      <div style="font-size:13px;color:#6b6b7a;margin-top:8px;line-height:1.6">Muscle grows when you rest, not when you train.<br>This day is not optional.</div>
+    </div>
+    <div class="sec-lbl">Rest Day Checklist</div>`;
+    def.restChecks.forEach((item,i)=>{
+      const chk=!!data.restChecks[i];
+      el.innerHTML+=`<div class="ex-row${chk?' checked':''}" onclick="toggleRest(${i})">
+        <div class="chk-box"><span class="chk-icon">✓</span></div>
+        <div class="ex-info"><div class="ex-name">${item}</div></div>
+      </div>`;
+    });
+    renderPerfLog(el,data);
+    return;
+  }
+
+  // RECOVERY DAY
+  if(def.recovery){
+    el.innerHTML+=`<div class="sec-lbl">Choose 1–2 Activities</div>`;
+    def.recovery.forEach((item,i)=>{
+      const chk=!!data.recovery[i];
+      el.innerHTML+=`<div class="ex-row${chk?' checked':''}" onclick="toggleRecovery(${i})">
+        <div class="chk-box"><span class="chk-icon">✓</span></div>
+        <div class="ex-info">
+          <div class="ex-name">${item.label}</div>
+          <div class="ex-detail">${item.detail}</div>
+        </div>
+      </div>`;
+    });
+    renderPerfLog(el,data);
+    return;
+  }
+
+  // ENERGY
+  const eMap={low:['sel-low','rgba(255,71,87,.15)','#ff4757'],medium:['sel-medium','rgba(255,107,53,.15)','#ff6b35'],high:['sel-high','rgba(232,255,71,.15)','#e8ff47']};
+  el.innerHTML+=`<div style="margin-top:14px">
+    <div class="energy-lbl">Today's Energy</div>
+    <div class="energy-bar">
+      ${['low','medium','high'].map(v=>{
+        const sel=data.energy===v, [cls,bg,col]=eMap[v];
+        return `<button class="energy-btn" style="${sel?`background:${bg};border-color:${col};color:${col}`:''}" onclick="setEnergy('${v}')">${v==='low'?'🔴 Low':v==='medium'?'🟠 Medium':'🟢 High'}</button>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  // BAND LEGEND
+  el.innerHTML+=`<div class="sec-lbl">Loop Band Guide</div>
+  <div class="band-legend">
+    <div class="band-row">
+      <div class="band-dot" style="background:#a8e063"></div>
+      <div class="band-info"><div class="band-name">Light Band</div><div class="band-use">Warm-ups, glute activation, mobility. Barely any resistance.</div></div>
+    </div>
+    <div class="band-row">
+      <div class="band-dot" style="background:#f7dc6f"></div>
+      <div class="band-info"><div class="band-name">Medium Band — Main Workhorse</div><div class="band-use">Squats, rows, side steps, tricep extensions. Feel it in 12–20 reps.</div></div>
+    </div>
+    <div class="band-row">
+      <div class="band-dot" style="background:#e74c3c"></div>
+      <div class="band-info"><div class="band-name">Heavy Band — Glute Builder</div><div class="band-use">Hip thrusts, glute bridges, lat pulldowns. Hard from the first 5 reps.</div></div>
+    </div>
+  </div>`;
+
+  // SECTIONS
+  def.sections.forEach(sec=>{
+    el.innerHTML+=`<div class="sec-lbl">${sec.name}</div>`;
+    sec.exercises.forEach(ex=>{
+      const chk=!!data.exercises[ex.name], sc=data.sets[ex.name]||0;
+      const uid='ex_'+ex.name.replace(/\W/g,'_');
+      let dots='';
+      if(ex.sets>0){
+        dots='<div class="set-dots">';
+        for(let s=0;s<ex.sets;s++) dots+=`<div class="set-dot${s<sc?' done':''}" onclick="event.stopPropagation();toggleSet('${ex.name}',${s},${ex.sets})"></div>`;
+        dots+='</div>';
+      }
+      el.innerHTML+=`<div class="ex-row${chk?' checked':''}" onclick="toggleExercise('${ex.name}',${ex.sets})">
+        <div class="chk-box"><span class="chk-icon">✓</span></div>
+        <div class="ex-info">
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-meta">${ex.meta}</div>
+          ${ex.detail?`<div class="ex-detail">${ex.detail}</div>`:''}
+          <button class="howto-btn" onclick="event.stopPropagation();toggleHow('${uid}')">▸ How to do it</button>
+          <div class="howto-panel" id="${uid}">
+            <p>${ex.how}</p>
+            <div class="feel">✓ <strong>You should feel:</strong> ${ex.feel}</div>
+            ${ex.band?`<div class="band-note">🔵 <strong>Loop band:</strong> ${ex.band}</div>`:''}
+          </div>
+        </div>
+        ${dots}
+      </div>`;
+    });
+  });
+
+  // CARDIO
+  if(def.cardio){
+    el.innerHTML+=`<div class="sec-lbl">Cardio Finisher</div>
+    <div class="cardio-row" onclick="toggleCardio()">
+      <div>
+        <div class="cardio-lbl">${def.cardio.label}</div>
+        <div class="cardio-sub">${def.cardio.detail}</div>
+      </div>
+      <div class="cardio-chk${data.cardio?' done':''}">
+        ${data.cardio?'<span style="color:#0d0d0f;font-size:13px;font-weight:900">✓</span>':''}
+      </div>
+    </div>`;
+  }
+
+  // TIP
+  const tipIdx=Math.min(Math.floor((ST.week-1)/2),3);
+  el.innerHTML+=`<div class="tip-box">📈 <strong>Week ${ST.week} Focus:</strong> ${WEEK_TIPS[tipIdx]}</div>`;
+
+  renderPerfLog(el,data);
+}
+
+function renderPerfLog(el,data){
+  el.innerHTML+=`<div class="sec-lbl">Performance Log</div>
+  <div class="perf-box">
+    <div class="perf-row">
+      <div class="perf-key">Difficulty</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <input type="range" class="diff-slider" min="1" max="10" value="${data.difficulty||5}" oninput="setDifficulty(this.value)">
+        <div class="diff-val" id="diff-val">${data.difficulty||5}</div>
+      </div>
+    </div>
+    <div class="perf-row">
+      <div class="perf-key">Last Sets</div>
+      <div class="effort-btns">
+        ${[['easy','Easy'],['hard','Hard'],['failure','Near Failure ⚡']].map(([v,l])=>
+          `<button class="effort-btn${data.effort===v?' sel':''}" onclick="setEffort('${v}')">${l}</button>`
+        ).join('')}
+      </div>
+    </div>
+    <input type="text" class="win-input" placeholder="⚡ Win of the day (stronger / sweaty / pumped...)" value="${data.win||''}" oninput="setWin(this.value)">
+  </div>`;
+}
+
+// ─── ACTIONS ─────────────────────────────────────────────────────────
+function toggleHow(uid){
+  const p=document.getElementById(uid);
+  const btn=p.previousElementSibling;
+  p.classList.toggle('open');
+  btn.textContent=p.classList.contains('open')?'▾ How to do it':'▸ How to do it';
+}
+function toggleExercise(name,sets){
+  const d=getDayData(ST.week,ST.day);
+  d.exercises[name]=!d.exercises[name];
+  if(sets>0) d.sets[name]=d.exercises[name]?sets:0;
+  save(); render();
+  if(d.exercises[name]&&isDayComplete(ST.week,ST.day)) showToast('Day '+ST.day+' complete! 💪');
+}
+function toggleSet(name,idx,total){
+  const d=getDayData(ST.week,ST.day);
+  const curr=d.sets[name]||0;
+  d.sets[name]=idx<curr?idx:idx+1;
+  d.exercises[name]=d.sets[name]>=total;
+  save(); render();
+}
+function toggleRest(idx){ const d=getDayData(ST.week,ST.day); d.restChecks[idx]=!d.restChecks[idx]; save(); render(); }
+function toggleRecovery(idx){ const d=getDayData(ST.week,ST.day); d.recovery[idx]=!d.recovery[idx]; save(); render(); }
+function toggleCardio(){ const d=getDayData(ST.week,ST.day); d.cardio=!d.cardio; save(); render(); if(d.cardio) showToast('Cardio done! 🔥'); }
+function setEnergy(v){ getDayData(ST.week,ST.day).energy=v; save(); render(); }
+function setDifficulty(v){ getDayData(ST.week,ST.day).difficulty=parseInt(v); document.getElementById('diff-val').textContent=v; save(); }
+function setEffort(v){ getDayData(ST.week,ST.day).effort=v; save(); render(); }
+function setWin(v){ getDayData(ST.week,ST.day).win=v; save(); }
+
+// ─── NAV ─────────────────────────────────────────────────────────────
+document.getElementById('btn-nd').onclick=()=>{
+  if(ST.day<7) ST.day++; else if(ST.week<8){ST.week++;ST.day=1;}
+  save(); render(); window.scrollTo({top:0,behavior:'smooth'});
+};
+document.getElementById('btn-pd').onclick=()=>{
+  if(ST.day>1) ST.day--; else if(ST.week>1){ST.week--;ST.day=7;}
+  save(); render(); window.scrollTo({top:0,behavior:'smooth'});
+};
+document.getElementById('btn-pw').onclick=()=>{ if(ST.week>1){ST.week--;ST.day=1;save();render();} };
+document.getElementById('btn-nw').onclick=()=>{ if(ST.week<8){ST.week++;ST.day=1;save();render();} };
+
+render();
+</script>
+</body>
+</html>
