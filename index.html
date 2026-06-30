@@ -9,7 +9,7 @@
   :root {
     --bg:#0d0d0f; --surface:#151518; --surface2:#1c1c21; --border:#2a2a32;
     --accent:#e8ff47; --accent2:#ff6b35; --accent3:#47d4ff;
-    --text:#f0f0f0; --muted:#6b6b7a; --danger:#ff4757; --success:#2ecc71;
+    --text:#f0f0f0; --muted:#6b6b7a; --danger:#ff4757; --success:#2ecc71; --deload:#8e44ad;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;max-width:430px;margin:0 auto;overflow-x:hidden}
@@ -26,7 +26,16 @@
   .wk-dot{width:28px;height:6px;border-radius:3px;background:var(--border);cursor:pointer;transition:background .2s}
   .wk-dot.active{background:var(--accent)}
   .wk-dot.done{background:var(--success);opacity:.7}
+  .wk-dot.deload-wk{background:var(--deload);opacity:.5}
+  .wk-dot.deload-wk.active{background:var(--deload);opacity:1}
   .nav-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:18px;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+  /* BLOCK BADGE */
+  .block-strip{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 20px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border)}
+  .block-pill{padding:3px 10px;border-radius:10px;font-weight:700;letter-spacing:.5px}
+  .block-pill.A{background:rgba(232,255,71,.15);color:var(--accent)}
+  .block-pill.B{background:rgba(71,212,255,.15);color:var(--accent3)}
+  .block-pill.deload{background:rgba(142,68,173,.2);color:var(--deload)}
 
   /* DAY PILLS */
   .day-scroll{display:flex;gap:8px;padding:12px 20px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
@@ -59,18 +68,31 @@
   .sec-lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
   .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
 
+  /* DELOAD BANNER */
+  .deload-banner{background:rgba(142,68,173,.1);border:1.5px solid var(--deload);border-radius:14px;padding:16px;margin-top:14px}
+  .deload-banner-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--deload);display:flex;align-items:center;gap:8px}
+  .deload-banner-sub{font-size:12px;color:var(--text);margin-top:6px;line-height:1.6}
+
+  /* ROTATION BANNER */
+  .rotation-banner{background:rgba(71,212,255,.08);border:1px solid rgba(71,212,255,.25);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--accent3);margin-top:12px;line-height:1.6}
+
   /* EXERCISE ROW */
-  .ex-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .15s;user-select:none;margin-bottom:6px}
+  .ex-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;transition:all .15s;user-select:none;margin-bottom:6px}
   .ex-row.checked{background:rgba(232,255,71,.06);border-color:rgba(232,255,71,.3)}
-  .ex-row:active{transform:scale(.98)}
+  .ex-row.deload-row{border-color:rgba(142,68,173,.3)}
+  .ex-row.deload-row.checked{background:rgba(142,68,173,.08);border-color:rgba(142,68,173,.4)}
+  .ex-top{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+  .ex-top:active{opacity:.85}
   .chk-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all .15s}
   .ex-row.checked .chk-box{background:var(--accent);border-color:var(--accent)}
+  .ex-row.deload-row.checked .chk-box{background:var(--deload);border-color:var(--deload)}
   .chk-icon{display:none;font-size:13px;color:#0d0d0f;font-weight:900}
   .ex-row.checked .chk-icon{display:block}
   .ex-info{flex:1;min-width:0}
   .ex-name{font-size:15px;font-weight:500;transition:color .15s}
   .ex-row.checked .ex-name{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(232,255,71,.4)}
   .ex-meta{font-size:12px;color:var(--accent2);margin-top:2px;font-weight:500}
+  .ex-new-badge{display:inline-block;font-size:9px;font-weight:700;background:rgba(71,212,255,.2);color:var(--accent3);padding:1px 6px;border-radius:8px;margin-left:6px;letter-spacing:.3px;vertical-align:middle}
   .ex-detail{font-size:12px;color:var(--muted);margin-top:2px;font-weight:300}
 
   /* HOW TO PANEL */
@@ -82,16 +104,31 @@
   .howto-panel strong{color:var(--accent);font-weight:600}
   .howto-panel .feel{background:rgba(232,255,71,.07);border-left:3px solid var(--accent);padding:8px 10px;border-radius:0 6px 6px 0;font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6}
   .howto-panel .band-note{background:rgba(71,212,255,.07);border-left:3px solid var(--accent3);padding:8px 10px;border-radius:0 6px 6px 0;font-size:12px;color:var(--accent3);margin-top:8px;line-height:1.6}
+  .howto-panel .bench-note{background:rgba(255,107,53,.07);border-left:3px solid var(--accent2);padding:8px 10px;border-radius:0 6px 6px 0;font-size:12px;color:var(--accent2);margin-top:8px;line-height:1.6}
 
   /* SET DOTS */
   .set-dots{display:flex;gap:4px;flex-shrink:0;padding-top:4px}
   .set-dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .15s}
   .set-dot.done{background:var(--accent)}
 
-  /* ENERGY */
-  .energy-bar{display:flex;gap:8px;margin:12px 0 18px}
-  .energy-lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-  .energy-btn{flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit}
+  /* WEIGHT LOG */
+  .weight-log{margin-top:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+  .weight-log-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .weight-log-lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .weight-trend{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
+  .weight-trend.up{background:rgba(46,204,113,.15);color:var(--success)}
+  .weight-trend.same{background:rgba(107,107,122,.15);color:var(--muted)}
+  .weight-trend.first{background:rgba(71,212,255,.15);color:var(--accent3)}
+  .weight-trend.deload-trend{background:rgba(142,68,173,.15);color:var(--deload)}
+  .weight-trend.suggested{background:rgba(232,255,71,.15);color:var(--accent)}
+  .weight-input-row{display:flex;align-items:center;gap:8px}
+  .weight-stepper{display:flex;align-items:center;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;overflow:hidden}
+  .weight-step-btn{background:none;border:none;color:var(--text);font-size:16px;font-weight:700;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
+  .weight-step-btn:active{background:rgba(232,255,71,.15)}
+  .weight-val-box{min-width:54px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--accent)}
+  .weight-unit{font-size:11px;color:var(--muted);font-weight:600}
+  .weight-last{font-size:11px;color:var(--muted);margin-left:auto;font-weight:300}
+  .weight-suggest-row{font-size:11px;color:var(--accent3);margin-top:6px;display:flex;align-items:center;gap:6px}
 
   /* CARDIO */
   .cardio-row{padding:12px 14px;background:var(--surface);border:1.5px solid var(--accent3);border-radius:12px;display:flex;align-items:center;justify-content:space-between;margin-top:6px;cursor:pointer}
@@ -99,6 +136,11 @@
   .cardio-sub{font-size:12px;color:var(--muted);margin-top:2px}
   .cardio-chk{width:22px;height:22px;border-radius:6px;border:2px solid var(--accent3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
   .cardio-chk.done{background:var(--accent3)}
+
+  /* ENERGY */
+  .energy-bar{display:flex;gap:8px;margin:12px 0 18px}
+  .energy-lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .energy-btn{flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit}
 
   /* PERF LOG */
   .perf-box{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-top:8px}
@@ -130,13 +172,38 @@
   .band-name{font-weight:600;color:var(--text)}
   .band-use{color:var(--muted);font-weight:300}
 
+  /* DUMBBELL LEGEND */
+  .db-legend{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .db-card{text-align:center;padding:8px 4px;background:var(--surface2);border-radius:8px}
+  .db-w{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent)}
+  .db-u{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.4}
+
+  /* WEIGHT PROGRESS MODAL */
+  .progress-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;padding:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:12px;font-weight:600;color:var(--accent3)}
+  .progress-modal{display:none;position:fixed;inset:0;background:rgba(13,13,15,.92);z-index:300;overflow-y:auto}
+  .progress-modal.open{display:block}
+  .progress-modal-inner{max-width:430px;margin:0 auto;padding:20px}
+  .progress-close{position:sticky;top:0;display:flex;justify-content:flex-end;padding-bottom:10px}
+  .progress-close button{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);width:32px;height:32px;font-size:16px;cursor:pointer}
+  .progress-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--accent);margin-bottom:16px}
+  .ex-progress-card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+  .ex-progress-name{font-size:14px;font-weight:600;margin-bottom:8px}
+  .ex-progress-chart{display:flex;align-items:flex-end;gap:4px;height:60px;margin-bottom:6px}
+  .ex-progress-bar{flex:1;background:var(--border);border-radius:3px 3px 0 0;position:relative;min-height:4px;transition:height .3s}
+  .ex-progress-bar.has-data{background:var(--accent)}
+  .ex-progress-bar.deload-bar.has-data{background:var(--deload)}
+  .ex-progress-labels{display:flex;gap:4px;font-size:9px;color:var(--muted)}
+  .ex-progress-labels span{flex:1;text-align:center}
+  .ex-progress-summary{font-size:11px;color:var(--muted);margin-top:6px}
+  .ex-progress-summary strong{color:var(--success)}
+
   /* BOTTOM BAR */
   .bottom-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:12px 20px 24px;background:linear-gradient(to top,var(--bg) 70%,transparent);display:flex;gap:10px}
   .btn-primary{flex:1;padding:14px;border-radius:12px;background:var(--accent);color:#0d0d0f;font-family:inherit;font-size:14px;font-weight:700;border:none;cursor:pointer}
   .btn-secondary{padding:14px 18px;border-radius:12px;background:var(--surface2);border:1.5px solid var(--border);color:var(--text);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
 
   /* TOAST */
-  .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:500;color:var(--text);opacity:0;pointer-events:none;transition:all .25s;z-index:200;white-space:nowrap}
+  .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:500;color:var(--text);opacity:0;pointer-events:none;transition:all .25s;z-index:400;white-space:nowrap}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
@@ -155,8 +222,18 @@
   <button class="nav-btn" id="btn-nw">›</button>
 </div>
 
+<div class="block-strip" id="block-strip"></div>
+
 <div class="day-scroll" id="day-pills"></div>
 <div class="content" id="content"></div>
+
+<div class="progress-modal" id="progress-modal">
+  <div class="progress-modal-inner">
+    <div class="progress-close"><button onclick="closeProgress()">✕</button></div>
+    <div class="progress-title">WEIGHT PROGRESS</div>
+    <div id="progress-body"></div>
+  </div>
+</div>
 
 <div class="bottom-bar">
   <button class="btn-secondary" id="btn-pd">← Back</button>
@@ -164,71 +241,141 @@
 </div>
 
 <script>
-// ─── DATA ────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────
+// PROGRAM DESIGN NOTES
+// Based on research: systematic exercise rotation (not random "muscle
+// confusion") every 2 weeks produces better regional hypertrophy than
+// staying static the whole 8 weeks (Kassiano et al. 2022, JSCR;
+// Krzysztofik et al. PLOS ONE). Excessive/random rotation hurts progress,
+// so each exercise has exactly ONE planned swap, not constant change.
+//
+// Structure: two 4-week mesocycles, each split into 2-week microcycles.
+//   Weeks 1-2  = Block A (baseline movement pool)
+//   Week 3-4   = Block B (rotated variation pool) -- week 4 is a deload
+//   Weeks 5-6  = Block A again, heavier than weeks 1-2
+//   Week 7-8   = Block B again, heavier than weeks 3-4 -- week 8 deload
+// Deload = 70-80% of recent working weight, sets reduced, no failure sets
+// (Legion/NASM/Cleveland Clinic deload guidance: 40-50% load or 70-80%
+// load + reduced volume, every 4-8 weeks for intermediate lifters).
+// ─────────────────────────────────────────────────────────────────────
+
+const DUMBBELLS = [5,8,10,15,20,25];
+const DELOAD_WEEKS = [4,8];
+
+// returns 'A' or 'B' for a given week
+function getBlock(week) {
+  // weeks 1,2,5,6 = A | weeks 3,4,7,8 = B
+  const wk4 = ((week-1) % 4) + 1; // 1..4 within the 4-wk mesocycle
+  return (wk4 <= 2) ? 'A' : 'B';
+}
+function isDeloadWeek(week) { return DELOAD_WEEKS.includes(week); }
+
 const DAYS = [
 {
   id:1, label:'Day 1', title:'LOWER BODY', subtitle:'Glutes + Legs', color:'#e8ff47',
-  sections:[
-    { name:'Warm-Up', exercises:[
-      { name:'Vibration Plate', meta:'5 min', sets:0,
-        how:'Stand on the vibration plate for 5 minutes to warm up joints and activate muscles. You can do light squats or just stand still. This primes your glutes and legs before the main work.',
-        feel:'Light vibration — just warm-up, no intensity needed here.',
-        band:null }
-    ]},
-    { name:'Main Work', exercises:[
-      { name:'Goblet Squat', meta:'4 sets × 12–15 reps · 8lb DB', sets:4,
-        how:'Hold one 8lb dumbbell vertically at your chest with both hands. Feet shoulder-width apart, toes slightly out. Push your knees OUT against the loop band as you sit back and down — go as deep as you comfortably can. Drive through your heels to stand up. <strong>3 seconds down, 1 second pause at the bottom, then up.</strong>',
-        feel:'You should feel your quads burning and glutes engaging equally. Last 3–5 reps should feel like a slow grind.',
-        band:'Loop band above knees — medium or heavy. The band should create noticeable resistance when you push your knees out. If your knees are caving inward instead of pushing out, the band is too heavy — go lighter.' },
-      { name:'Hip Thrust (Bench)', meta:'4 sets × 15–20 reps · 8lb DB', sets:4,
-        how:'Sit on the floor with your upper back against the edge of the flat bench. Place both 8lb dumbbells or just one on your hip bones, hold them in place. Feet flat on floor, about hip-width apart. Drive your hips straight UP toward the ceiling, squeezing your glutes HARD at the top. <strong>Hold the top 2–3 seconds every rep.</strong> Lower slowly.',
-        feel:'Your glutes should do 90% of the work. If you feel it mostly in your lower back, your feet are too close to your body — push them slightly further out.',
-        band:'Loop band just above your knees — medium or heavy. The band adds extra glute activation by forcing your knees slightly apart at the top.' },
-      { name:'Reverse Lunges', meta:'3 sets × 10 reps each leg · 5–8lb DBs', sets:3,
-        how:'Stand tall holding a dumbbell in each hand. Step one foot BACK — far enough that your front knee stays over your ankle, not past your toes. Lower your back knee toward the floor with control. <strong>2–3 seconds on the way down.</strong> Push through your front heel to return to standing. Do all reps on one leg, then switch.',
-        feel:'Your front leg should be doing all the work — glute and quad of the front leg burning. Back leg is just for balance and stretch.',
-        band:null },
-      { name:'Romanian Deadlift', meta:'3 sets × 12–15 reps · 8lb DBs', sets:3,
-        how:'Stand holding both dumbbells in front of your thighs. Slight bend in your knees — keep it there the whole time. Push your hips BACK like you\'re trying to touch the wall behind you, letting the dumbbells slide down your legs close to your body. Go until you feel a strong stretch in your hamstrings, then squeeze your glutes and drive your hips forward to stand back up.',
-        feel:'You should feel a deep stretch in your hamstrings on the way down, then your glutes squeezing hard at the top. If you feel it in your lower back, you\'re rounding — keep your chest up.',
-        band:null },
-      { name:'Band Side Steps', meta:'3 sets × 15 steps each way', sets:3,
-        how:'Place the loop band just above your knees or around your ankles (above knees is easier, ankles are harder). Stand with feet hip-width apart in a slight squat position — stay low the whole time. Step sideways, keeping tension on the band the entire time. Never let your feet come completely together.',
-        feel:'Burning in the side of your glutes (outer glutes) within 10–15 steps. If you feel nothing, the band is too light or you\'re standing too upright.',
-        band:'Loop band above knees (medium) or around ankles (heavy). Keep constant tension — never let the band go slack.' },
-      { name:'Calf Raises', meta:'3 sets × 20 reps · bodyweight', sets:3,
-        how:'Stand with feet hip-width apart, hands lightly on a wall or bench for balance. Rise up onto the balls of your feet as HIGH as you can go. <strong>Hold the top 2 seconds.</strong> Lower slowly and fully — let your heels drop below the step if you can for extra range.',
-        feel:'Deep burn in your calves. If it feels easy, slow down the lowering phase to 3–4 seconds.',
-        band:null }
-    ]}
+  warmup:[
+    { name:'Vibration Plate', meta:'5 min', sets:0, trackWeight:false,
+      how:'Stand on the vibration plate for 5 minutes to warm up joints and activate muscles. Light squats or just stand still. Primes your legs and glutes before loading weight.',
+      feel:'Light vibration only — just a warm-up, no intensity needed.', band:null, bench:null }
+  ],
+  blockA:[
+    { name:'Goblet Squat', meta:'4 sets × 10–12 reps', sets:4, trackWeight:true, startWeight:15,
+      how:'Hold a dumbbell vertically at your chest with both hands, elbows pointing down. Feet shoulder-width, toes slightly out. Push your knees OUT against the band as you sit back and down — go as deep as you can with good form. Drive through your heels to stand. <strong>3 seconds down, 1 second pause at bottom, then up.</strong>',
+      feel:'Quads burning, glutes engaging equally. Last 3–5 reps should feel like a slow grind.',
+      band:'Medium band above knees. Move to Heavy once Medium feels easy.', bench:null },
+    { name:'Bench Hip Thrust', meta:'4 sets × 12–15 reps', sets:4, trackWeight:true, startWeight:20,
+      how:'Bench flat. Sit on the floor, upper back against the bench edge. Rest a dumbbell on your hip crease, holding it with both hands. Feet flat, hip-width apart. Drive hips straight UP, squeezing glutes HARD at the top. <strong>Hold 2–3 seconds at the top.</strong> Lower with control.',
+      feel:'Glutes should do 90% of the work. If you feel it in your lower back, walk your feet slightly further out. This is your heaviest lift of the day.',
+      band:'Heavy band above knees. X-Heavy in weeks 5–8 once Heavy feels manageable.', bench:'Flat bench, upper back resting on the edge, hips fully extending past the bench line at the top.' },
+    { name:'Bulgarian Split Squat', meta:'3 sets × 8–10 reps each leg', sets:3, trackWeight:true, startWeight:10,
+      how:'Stand a few feet in front of the bench, facing away. Rest the top of one foot on the bench behind you. Dumbbell in each hand. Lower your back knee toward the floor — front knee tracks over your ankle. <strong>2–3 seconds down.</strong> Drive through your front heel to stand. Complete all reps one leg, then switch.',
+      feel:'Intense quad and glute burn in the front leg. Significantly harder than a regular lunge — balance is the early limiter, not strength.',
+      band:null, bench:'Flat bench behind you, only the top of your rear foot resting on it.' },
+    { name:'Romanian Deadlift', meta:'3 sets × 10–12 reps', sets:3, trackWeight:true, startWeight:20,
+      how:'Stand holding a dumbbell in each hand in front of your thighs. Slight knee bend — keep it fixed. Push hips BACK, letting the dumbbells slide down close to your legs. Go until you feel a strong hamstring stretch, then squeeze glutes and drive hips forward to stand.',
+      feel:'Deep hamstring stretch on the way down, glute squeeze at the top. If you feel it in your lower back, keep your chest up.',
+      band:null, bench:null },
+    { name:'Band Lateral Walks', meta:'3 sets × 15 steps each way', sets:3, trackWeight:false,
+      how:'Band above your knees (or ankles, harder). Quarter-squat position, stay low the entire set. Step sideways with constant band tension — never let your feet fully come together.',
+      feel:'Outer glute burn within 10–15 steps. If you feel nothing, you\'re standing too upright or the band is too light.',
+      band:'Medium band above knees, Heavy around ankles for an advanced version.', bench:null },
+    { name:'Standing Calf Raise', meta:'3 sets × 15–20 reps', sets:3, trackWeight:true, startWeight:15,
+      how:'Dumbbell in each hand, stand on the edge of a step or plate so heels can drop below your toes. Rise onto the balls of your feet as HIGH as possible. <strong>Hold the top 2 seconds.</strong> Lower fully and slowly.',
+      feel:'Deep calf burn. Slow the lowering phase before adding weight.', band:null, bench:null }
+  ],
+  blockB:[
+    { name:'Sumo DB Squat', meta:'4 sets × 10–12 reps', sets:4, trackWeight:true, startWeight:20,
+      how:'Stand with feet wider than shoulder-width, toes turned out about 30–45°. Hold one dumbbell with both hands hanging straight down between your legs. Sit straight down between your heels, knees tracking over toes. <strong>3 seconds down, drive up through your heels.</strong> This wider stance shifts more emphasis onto your inner thighs and glutes compared to the goblet squat.',
+      feel:'Inner thighs (adductors) and glutes working harder than a regular squat, quads slightly less involved. A noticeably different burn pattern than goblet squats.',
+      band:'Medium band above knees.', bench:null },
+    { name:'Single-Leg Hip Thrust', meta:'3 sets × 10–12 reps each leg', sets:3, trackWeight:true, startWeight:8,
+      how:'Bench flat, upper back against the edge, same setup as the two-leg version, but extend one leg straight out and balance on the other foot. Hold a lighter dumbbell on your hip if needed for balance. Drive the working hip straight up, squeeze hard at the top, lower with control. Complete all reps one side, then switch.',
+      feel:'Far more intense glute isolation per side than the bilateral version since one leg does all the work. Expect to use noticeably less weight than the two-leg hip thrust.',
+      band:null, bench:'Flat bench, upper back resting on edge.' },
+    { name:'Walking Lunges', meta:'3 sets × 10 reps each leg', sets:3, trackWeight:true, startWeight:10,
+      how:'Dumbbell in each hand, stand tall. Step forward into a lunge, lowering your back knee toward the floor, then push off your front foot to step into the next lunge rather than stepping back. Continue walking forward for all reps. <strong>Controlled descent each step.</strong>',
+      feel:'More dynamic and metabolically demanding than stationary reverse lunges — your legs get less of a "reset" between reps, so expect more burn and slightly less load capacity.',
+      band:null, bench:null },
+    { name:'Single-Leg RDL', meta:'3 sets × 8–10 reps each leg', sets:3, trackWeight:true, startWeight:10,
+      how:'Hold one dumbbell in the hand opposite your standing leg. Stand on one leg, hinge forward at the hips while extending the other leg straight back behind you for balance, letting the dumbbell lower toward the floor close to your standing leg. Squeeze your glute to return to standing. Complete all reps one side, then switch.',
+      feel:'Significantly more hamstring and glute activation per side than the bilateral RDL, plus a real balance and core stability challenge. Use less weight than your two-leg RDL — this is normal.',
+      band:null, bench:null },
+    { name:'Band Monster Walks', meta:'3 sets × 12 steps forward + 12 back', sets:3, trackWeight:false,
+      how:'Band above your knees, quarter-squat position. Step diagonally forward (like a wide marching step), alternating legs, for 12 steps, then walk backward 12 steps the same way. Unlike lateral walks this hits glutes from a different angle through forward/backward movement.',
+      feel:'Glutes and outer hip burning, with a bit more quad involvement than pure lateral walks because of the forward stepping pattern.',
+      band:'Medium to Heavy band above knees.', bench:null },
+    { name:'Seated Calf Raise', meta:'3 sets × 15–20 reps', sets:3, trackWeight:true, startWeight:15,
+      how:'Sit on the edge of the bench, feet flat on the floor, balls of your feet on a slightly raised surface if available. Rest a dumbbell on top of each knee, holding it in place. Raise your heels as high as possible, hold 2 seconds, lower fully. The seated angle shifts emphasis to the soleus (deeper calf muscle) rather than the gastrocnemius hit by standing raises.',
+      feel:'A different, often deeper burn than standing calf raises — many people feel this one more directly under the calf.', band:null, bench:'Sit on the edge, knees bent at 90°.' }
   ],
   cardio:{ label:'Treadmill Incline Walk', detail:'10–15 min · incline 8–12 · moderate pace' }
 },
 {
   id:2, label:'Day 2', title:'PUSH', subtitle:'Chest / Shoulders / Triceps', color:'#ff6b35',
-  sections:[
-    { name:'Main Work', exercises:[
-      { name:'Flat Bench DB Press', meta:'4 sets × 12–15 reps · 8lb DBs', sets:4,
-        how:'Lie flat on the bench, a dumbbell in each hand. Start with DBs at chest level, elbows at about 45 degrees from your body — not flared straight out. Press up until arms are nearly extended, then lower <strong>3 seconds back down</strong> until you feel a stretch across your chest. This deeper range is what makes a bench press better than a floor press.',
-        feel:'Stretch across your chest at the bottom, contraction in your chest at the top. Your arms should fatigue AFTER your chest — if your triceps give out first, the weight is too heavy.',
-        band:null },
-      { name:'Shoulder Press', meta:'3 sets × 10–12 reps · 5–8lb DBs', sets:3,
-        how:'Sit upright on the bench, core tight — do not lean back. Hold dumbbells at shoulder height, palms facing forward. Press straight up until arms are almost fully extended, then lower slowly back to shoulder height. <strong>No leaning back or using momentum.</strong>',
-        feel:'Shoulders burning mid-set, core working to keep you upright. If you\'re leaning back it means the weight is too heavy — drop to 5lb.',
-        band:null },
-      { name:'Push-ups', meta:'3 sets × near failure · floor or elevated', sets:3,
-        how:'Hands slightly wider than shoulder-width. Body in a straight line from head to heels — no sagging hips. Lower your chest all the way to the floor (or bench if elevated), then press back up. <strong>Elevated = hands on bench (easier). Floor = harder.</strong> Last reps should be slow and shaky — that\'s the goal.',
-        feel:'Chest, shoulders, and triceps all working together. Stop the set when you can no longer maintain form.',
-        band:null },
-      { name:'Lateral Raises', meta:'3 sets × 15–20 reps · 5lb DBs ONLY', sets:3,
-        how:'Stand or sit, 5lb dumbbell in each hand, arms at your sides. Raise both arms out to the sides simultaneously until they reach shoulder height — no higher. <strong>Slow and controlled — 2 seconds up, 2 seconds down.</strong> Your thumbs should be slightly lower than your pinkies at the top (like pouring water out of a pitcher).',
-        feel:'Deep burn in the side of your shoulders by rep 10–15. This is one of those exercises where 5lb feels heavier than you expect when done right. Never swing the weight up.',
-        band:null },
-      { name:'Band Triceps Extensions', meta:'3 sets × 15–20 reps', sets:3,
-        how:'Anchor the loop band overhead — loop it over a door at the top, or hold both ends yourself. Face away from the anchor. Hold the band with both hands behind your head, elbows pointing up toward the ceiling. <strong>Keep elbows locked in place</strong> — only your forearms move. Extend your arms straight down/forward until fully extended, then slowly return.',
-        feel:'Burn directly in the back of your upper arms (triceps). If your elbows are moving, you\'re using too much momentum.',
-        band:'Loop band anchored above head. Use light-to-medium resistance — you need to be able to complete 15–20 reps with strict form.' }
-    ]}
+  blockA:[
+    { name:'Incline DB Press', meta:'4 sets × 10–12 reps', sets:4, trackWeight:true, startWeight:15,
+      how:'Bench at 30–45° incline. Lie back, dumbbell in each hand at shoulder level, elbows at roughly 45° from your body. Press up until arms are nearly extended, then lower <strong>3 seconds back down</strong> until you feel a deep stretch across your upper chest.',
+      feel:'Upper chest stretch at the bottom, contraction at the top. Targets upper chest more than a flat press. Arms should fatigue after chest, not before.',
+      band:null, bench:'Incline 30–45°. Too steep turns this into a shoulder press — keep it moderate.' },
+    { name:'Flat DB Press', meta:'3 sets × 10–12 reps', sets:3, trackWeight:true, startWeight:20,
+      how:'Bench flat. Lower dumbbells to chest level, press up slowly. This is your heaviest chest lift — push the weight here once incline is done and shoulders are warm.',
+      feel:'Mid-chest stretch and contraction. Last 2–3 reps should be a genuine grind.', band:null, bench:'Flat.' },
+    { name:'Seated Shoulder Press', meta:'3 sets × 10–12 reps', sets:3, trackWeight:true, startWeight:10,
+      how:'Bench upright (90° or close) for back support. Dumbbells at shoulder height, palms forward. Press straight up until arms are nearly extended. <strong>No leaning back, no momentum.</strong> Lower with control.',
+      feel:'Shoulders burning mid-set. If you must lean back to finish reps, the weight is too heavy.', band:null, bench:'Upright 90° for back support.' },
+    { name:'Decline Push-Ups', meta:'3 sets × near failure', sets:3, trackWeight:false,
+      how:'Feet elevated on the bench (decline angle), hands on the floor slightly wider than shoulder-width. Body in a straight line. Lower chest to the floor, press back up.',
+      feel:'Much harder than a standard push-up — upper chest and shoulders working overtime.', band:null, bench:'Decline — feet up on bench, hands on floor.' },
+    { name:'Lateral Raises', meta:'3 sets × 12–15 reps', sets:3, trackWeight:true, startWeight:8,
+      how:'Standing, dumbbell in each hand at your sides. Raise both arms out to the sides simultaneously to shoulder height — no higher. <strong>2 seconds up, 2 seconds down.</strong> Thumbs slightly lower than pinkies at the top.',
+      feel:'Deep burn in the side of your shoulders by rep 10–12. Strict form matters more than weight.', band:null, bench:null },
+    { name:'Band Triceps Pushdown', meta:'3 sets × 15–20 reps', sets:3, trackWeight:false,
+      how:'Anchor band overhead. Face away, elbows pinned at your sides pointing up. <strong>Elbows locked</strong> — only forearms move. Extend arms straight down until fully extended, return slowly.',
+      feel:'Burn directly in the back of your upper arms. If elbows drift forward, you\'re using momentum.',
+      band:'Light or Medium to start — you need clean 15–20 reps.', bench:null }
+  ],
+  blockB:[
+    { name:'Decline DB Press', meta:'4 sets × 10–12 reps', sets:4, trackWeight:true, startWeight:20,
+      how:'Bench at a slight decline (15–25°), feet secured. Dumbbells at chest level, press straight up. <strong>3 seconds down.</strong> The decline angle shifts emphasis to your lower chest, the opposite end from the incline press you did the past two weeks.',
+      feel:'Stretch and contraction in the lower portion of your chest specifically. You can typically handle slightly more weight here than on incline due to the more favorable pressing angle.',
+      band:null, bench:'Decline 15–25°, feet secured under the pad.' },
+    { name:'DB Floor Press', meta:'3 sets × 10–12 reps', sets:3, trackWeight:true, startWeight:20,
+      how:'Lie flat on the floor (not the bench), knees bent, feet flat. Dumbbells at chest, press up. Your upper arms stop at the floor at the bottom — this naturally limits range of motion and shifts more work to your triceps and reduces shoulder strain compared to a bench press.',
+      feel:'Less stretch than a bench press, but a stronger lockout-focused triceps and chest contraction. A good joint-friendly variation.', band:null, bench:'None — performed on the floor.' },
+    { name:'Arnold Press', meta:'3 sets × 10–12 reps', sets:3, trackWeight:true, startWeight:8,
+      how:'Bench upright. Start with dumbbells at shoulder height, palms facing YOU. As you press up, rotate your palms to face forward by the top of the movement. Reverse the rotation as you lower. This rotational path hits more of the shoulder through a fuller range than a standard press.',
+      feel:'More shoulder muscle fibers engaged through the rotation, particularly the front and side heads. Often feels harder than a regular press at the same weight — start a size lighter than your seated press.',
+      band:null, bench:'Upright 90°.' },
+    { name:'Incline Push-Ups', meta:'3 sets × near failure', sets:3, trackWeight:false,
+      how:'Hands on the bench (set flat or slightly inclined), feet on the floor. Body in a straight line. Lower chest to the bench edge, press back up. The incline (easier) version compared to the decline push-up you did the past two weeks — but push for more total reps since it\'s more accessible.',
+      feel:'Still chest and triceps focused but with less load than the decline version — aim for higher total reps before failure this time.', band:null, bench:'Flat or low incline, hands on the bench.' },
+    { name:'Front Raises', meta:'3 sets × 12–15 reps', sets:3, trackWeight:true, startWeight:8,
+      how:'Standing, dumbbell in each hand in front of your thighs. Raise one or both arms straight up in front of you to shoulder height, slight bend in elbow. <strong>Controlled, no swinging.</strong> Lower slowly. This targets the front of your shoulder, the area lateral raises don\'t reach.',
+      feel:'Burn in the front of your shoulders specifically — a different angle than the lateral raises from the past two weeks.', band:null, bench:null },
+    { name:'Overhead Band Triceps Extension', meta:'3 sets × 15–20 reps', sets:3, trackWeight:false,
+      how:'Anchor the band at floor level or step on it with one foot. Hold the other end with both hands overhead, elbows pointing forward and up. Extend your arms fully overhead, squeeze your triceps, lower with control. The overhead angle stretches your triceps more than the pushdown variation.',
+      feel:'A deeper triceps stretch than the pushdown version, with the burn concentrated more toward the long head of the triceps near your armpit.',
+      band:'Light or Medium — overhead position makes the same band level feel slightly harder.', bench:null }
   ],
   cardio:{ label:'Treadmill Incline Walk', detail:'15 min · incline 8–10' }
 },
@@ -244,83 +391,123 @@ const DAYS = [
 },
 {
   id:4, label:'Day 4', title:'PULL', subtitle:'Back + Biceps', color:'#e8ff47',
-  sections:[
-    { name:'Main Work', exercises:[
-      { name:'Chest-Supported DB Row', meta:'4 sets × 12–15 reps · 8lb DBs', sets:4,
-        how:'Set the flat bench horizontal. Lie face-down on it — chest on the bench, arms hanging straight down toward the floor, a dumbbell in each hand. Pull both dumbbells up toward your ribcage, driving your elbows back. <strong>Squeeze your shoulder blades together hard at the top and hold 1 second.</strong> Lower slowly.',
-        feel:'Deep burn in the middle of your back between your shoulder blades. This position removes lower back strain completely — your back muscles do ALL the work. If you feel it in your biceps more than your back, focus on driving your elbows rather than pulling with your hands.',
-        band:null },
-      { name:'Reverse Flys', meta:'3 sets × 15 reps · 5lb DBs', sets:3,
-        how:'Same chest-on-bench position as the row. Arms hang down, slight bend in your elbows. Raise both arms out to the sides like you\'re spreading wings — stop at shoulder height. <strong>Squeeze your shoulder blades together at the top.</strong> Lower slowly.',
-        feel:'Burning in your rear shoulders and upper back. This targets the back of your shoulder which most people neglect — it will improve your posture significantly.',
-        band:null },
-      { name:'Bicep Curls', meta:'3 sets × 12–15 reps · 5–8lb DBs', sets:3,
-        how:'Stand or sit, dumbbells at your sides, palms facing forward. Curl both dumbbells up toward your shoulders. At the top, squeeze your biceps hard. <strong>Lower in exactly 3 seconds</strong> — this slow lowering (eccentric) is the most important part for muscle growth.',
-        feel:'Biceps burning on the way up, deep stretch at the bottom. If you\'re swinging your body to curl the weight, go to 5lb.',
-        band:null },
-      { name:'Band Lat Pulldown', meta:'3 sets × 12–15 reps', sets:3,
-        how:'Loop the band over a high anchor point — top of a door works well. Kneel or sit on the floor facing the anchor. Hold both sides of the loop band with arms extended overhead. Pull the band down by driving your elbows DOWN and BACK toward your hips — like you\'re trying to put your elbows in your back pockets. <strong>Squeeze at the bottom, then slowly extend back up.</strong>',
-        feel:'Burning under your armpits and in your upper back (lats). This builds the wide part of your back. Focus on elbows down — not hands down.',
-        band:'Loop band anchored overhead. Use medium or heavy resistance — you should feel it by rep 8. If you can do 20+ reps easily, the band is too light.' }
-    ]}
+  blockA:[
+    { name:'Chest-Supported Row', meta:'4 sets × 10–12 reps', sets:4, trackWeight:true, startWeight:20,
+      how:'Bench at a slight incline (~30°). Lie face-down, chest supported, arms hanging straight down, a dumbbell in each hand. Pull both up toward your ribcage, driving elbows back. <strong>Squeeze shoulder blades together hard at the top, hold 1 second.</strong> Lower slowly.',
+      feel:'Deep mid-back burn. The bench support removes lower back strain entirely — this is your heaviest pull movement, push the weight here.',
+      band:null, bench:'Incline ~30°, chest fully supported against the pad.' },
+    { name:'Single-Arm DB Row', meta:'3 sets × 10–12 reps each side', sets:3, trackWeight:true, startWeight:20,
+      how:'Bench flat. Knee and hand of one side on the bench, other foot planted on the floor, flat back. Dumbbell in the free hand, arm hanging straight down. Pull the dumbbell up toward your hip, elbow driving back and up. Squeeze at the top, lower with control. Complete all reps, then switch sides.',
+      feel:'Strong contraction through the entire side of your back. You can typically go heavier here since it\'s one arm at a time.',
+      band:null, bench:'Flat — one knee and one hand supported on the bench.' },
+    { name:'Incline Reverse Fly', meta:'3 sets × 12–15 reps', sets:3, trackWeight:true, startWeight:8,
+      how:'Bench at a steep incline (45–60°), chest against the pad facing the back of the bench. Arms hang down, slight elbow bend. Raise both arms out to the sides like spreading wings to shoulder height. Squeeze shoulder blades at the top.',
+      feel:'Rear shoulder and upper back burn. One of the most under-trained areas — directly improves posture.', band:null, bench:'Steep incline, chest supported.' },
+    { name:'Incline DB Curl', meta:'3 sets × 10–12 reps, alternating', sets:3, trackWeight:true, startWeight:10,
+      how:'Bench at incline (45–60°), sit back with arms hanging straight down — this prevents swinging. Alternate one arm at a time. As you curl, rotate your palm to face up. <strong>3 seconds lowering each rep.</strong>',
+      feel:'Deep bicep stretch at the bottom because of the incline angle, strong contraction at the top.', band:null, bench:'Incline 45–60°, arms free-hanging.' },
+    { name:'Band Lat Pulldown', meta:'3 sets × 12–15 reps', sets:3, trackWeight:false,
+      how:'Loop band over a high anchor. Kneel or sit facing the anchor, arms extended overhead holding both sides. Pull down by driving elbows DOWN and BACK toward your hips. Squeeze at the bottom, extend back up slowly.',
+      feel:'Burn under your armpits and across your upper back. Focus on elbows down, not hands down.',
+      band:'Medium to start, Heavy once 15 reps feels easy.', bench:null }
+  ],
+  blockB:[
+    { name:'Renegade Row', meta:'3 sets × 8–10 reps each side', sets:3, trackWeight:true, startWeight:8,
+      how:'Start in a plank position with a dumbbell in each hand on the floor under your shoulders. Keeping your hips square and core braced, row one dumbbell up to your ribcage while balancing on the other arm, then lower and switch sides. This combines back work with a serious core/anti-rotation challenge that chest-supported rows don\'t provide.',
+      feel:'Back contraction plus heavy core engagement to resist twisting. Use noticeably lighter dumbbells than your chest-supported row — stability is the limiter here, not back strength.',
+      band:null, bench:null },
+    { name:'Incline DB Pullover', meta:'3 sets × 12–15 reps', sets:3, trackWeight:true, startWeight:12,
+      how:'Lie back on an incline bench (or flat, across it), holding one dumbbell with both hands above your chest. Keeping a slight bend in your elbows, lower the dumbbell back behind your head until you feel a stretch through your lats and chest, then pull it back over your chest. This hits your lats from a completely different angle than any rowing movement.',
+      feel:'A deep stretch through your lats and rib cage at the bottom — a noticeably different sensation than rows, which are all about contraction. Go lighter than you\'d expect.',
+      band:null, bench:'Flat or low incline, upper back supported, hips off if using flat bench across it.' },
+    { name:'Wide-Grip Band Row', meta:'3 sets × 12–15 reps', sets:3, trackWeight:false,
+      how:'Anchor the band at chest height. Hold both ends with palms facing down, arms extended. Pull both elbows out wide to the sides (not tucked to your ribs) until your hands reach your chest. This wide-elbow path targets your upper back and rear shoulders more than a standard row.',
+      feel:'Upper back and rear shoulders burning, distinctly different from the lat-focused single-arm row.',
+      band:'Medium to Heavy, anchored at chest height.', bench:null },
+    { name:'Hammer Curl', meta:'3 sets × 10–12 reps, alternating', sets:3, trackWeight:true, startWeight:10,
+      how:'Standing or seated, dumbbells held with palms facing each other (neutral grip) the entire movement — no rotation. Curl one arm at a time up toward your shoulder, squeeze, lower with a 3-second count. The neutral grip shifts emphasis to your forearm and the outer head of your bicep.',
+      feel:'A thicker, different burn than regular curls — more forearm involvement, less of the inner-bicep squeeze.', band:null, bench:null },
+    { name:'Band Pull-Apart', meta:'3 sets × 15–20 reps', sets:3, trackWeight:false,
+      how:'Hold the band with both hands at chest height, arms extended in front of you, palms down. Pull the band apart by driving your hands out to the sides until the band touches your chest, squeezing your shoulder blades together. Return with control. A finisher that directly targets the small muscles in your upper back and rear shoulders.',
+      feel:'A lighter, more isolated burn between your shoulder blades — a great posture-focused finisher after heavier pulling work.',
+      band:'Light to Medium — this should be doable for high reps with strict form.', bench:null }
   ],
   cardio:{ label:'Row Machine', detail:'10–15 min moderate · focus on full pulls' }
 },
 {
   id:5, label:'Day 5', title:'FULL BODY', subtitle:'Rebuild Circuit', color:'#ff6b35',
-  sections:[
-    { name:'Warm-Up', exercises:[
-      { name:'Vibration Plate', meta:'5 min', sets:0,
-        how:'5 minutes on the vibration plate to warm up the whole body before the circuit. Light movement — shift your weight, do small squats.',
-        feel:'Just a warm-up — light activation only.',
-        band:null }
-    ]},
-    { name:'Circuit · 3–4 Rounds · Rest 60–90 sec between rounds', exercises:[
-      { name:'Goblet Squat (banded)', meta:'12 reps per round · 8lb DB', sets:0,
-        how:'Same as Day 1 goblet squat. Hold 8lb dumbbell at chest, feet shoulder-width, push knees OUT against the loop band. 3 seconds down, controlled up. Focus on quality — this is a circuit so pace yourself.',
-        feel:'Quads and glutes equally loaded. By round 3–4 this will feel significantly harder than round 1.',
-        band:'Loop band above knees — medium or heavy.' },
-      { name:'Bench DB Press', meta:'10–12 reps per round · 8lb DBs', sets:0,
-        how:'Lie flat on bench, dumbbells at chest, press up and lower slowly. <strong>3 seconds down every rep.</strong> In a circuit your chest will be pre-fatigued by round 3 — that\'s the point.',
-        feel:'Chest stretch at the bottom, contraction at the top. Last reps of each round should be a struggle.',
-        band:null },
-      { name:'Chest-Supported Row', meta:'12–15 reps per round · 8lb DBs', sets:0,
-        how:'Lie face-down on the bench, pull dumbbells to your ribcage, squeeze shoulder blades. Strict form — no momentum in a circuit. The chest support means you can\'t cheat.',
-        feel:'Mid-back burning. Keep the squeeze at the top consistent every rep.',
-        band:null },
-      { name:'Hip Thrust (Bench)', meta:'15–20 reps per round · 8lb DB', sets:0,
-        how:'Upper back on bench, drive hips up, 2-second squeeze at the top every rep. In a circuit your glutes will be fatigued from the squats — push through. This is where the real growth happens.',
-        feel:'Glutes fully on fire by round 2–3. If you feel it in your lower back, check your foot position.',
-        band:'Loop band above knees — heavy.' },
-      { name:'Plank', meta:'30–45 sec per round · bodyweight', sets:0,
-        how:'Forearms on the ground, elbows under shoulders. Body in a straight line — squeeze your core, glutes, and thighs all at once. <strong>Do not let your hips sag or rise up.</strong> Breathe steadily.',
-        feel:'Core braced hard, slight shaking is normal and good. If your lower back hurts, drop to your knees.',
-        band:null }
-    ]}
+  warmup:[
+    { name:'Vibration Plate', meta:'5 min', sets:0, trackWeight:false,
+      how:'5 minutes to warm up the whole body before the circuit. Light movement — shift your weight, do small squats.',
+      feel:'Just a warm-up — light activation only.', band:null, bench:null }
+  ],
+  circuitLabel:'Circuit · 3–4 Rounds · Rest 60–90 sec between rounds',
+  blockA:[
+    { name:'Goblet Squat', meta:'10–12 reps per round', sets:0, trackWeight:true, startWeight:15,
+      how:'Same execution as Day 1. Dumbbell at chest, push knees out against the band, 3 seconds down. Use a weight you can hold quality form with across all rounds.',
+      feel:'Quads and glutes loaded equally. By round 3–4 this feels meaningfully harder.', band:'Medium band above knees.', bench:null },
+    { name:'Incline DB Press', meta:'8–10 reps per round', sets:0, trackWeight:true, startWeight:12,
+      how:'Bench at incline, press dumbbells up and lower 3 seconds. In a circuit your chest pre-fatigues by round 3 — use lighter weight than your dedicated push day.',
+      feel:'Chest stretch at the bottom, contraction at the top. Struggle is expected on the final round.', band:null, bench:'Incline 30–45°.' },
+    { name:'Chest-Supported Row', meta:'10–12 reps per round', sets:0, trackWeight:true, startWeight:15,
+      how:'Bench at incline, chest supported, pull dumbbells to ribcage, squeeze shoulder blades. Strict form — no momentum since you\'re already fatigued.',
+      feel:'Mid-back burning. Keep the squeeze at the top consistent every rep.', band:null, bench:'Incline ~30°.' },
+    { name:'Bench Hip Thrust', meta:'12–15 reps per round', sets:0, trackWeight:true, startWeight:15,
+      how:'Flat bench, upper back supported, drive hips up, 2-second squeeze every rep. Glutes already fatigued from squats — push through.',
+      feel:'Glutes on fire by round 2–3. Check foot position if you feel it in your lower back.', band:'Heavy band above knees.', bench:'Flat.' },
+    { name:'Plank', meta:'30–45 sec per round', sets:0, trackWeight:false,
+      how:'Forearms on the ground, elbows under shoulders, body in a straight line. Squeeze core, glutes, and thighs together.',
+      feel:'Core braced hard, mild shaking is normal.', band:null, bench:null }
+  ],
+  blockB:[
+    { name:'Sumo DB Squat', meta:'10–12 reps per round', sets:0, trackWeight:true, startWeight:18,
+      how:'Wide stance, one dumbbell hanging between your legs, sit straight down. Same form as Day 1 sumo squats but use a slightly lighter weight since this is mid-circuit.',
+      feel:'Inner thighs and glutes loaded, different pattern than goblet squats.', band:'Medium band above knees.', bench:null },
+    { name:'Decline DB Press', meta:'8–10 reps per round', sets:0, trackWeight:true, startWeight:15,
+      how:'Bench at decline, feet secured, press dumbbells up. Lower chest emphasis, lighter weight than your dedicated push day since you\'re mid-circuit.',
+      feel:'Lower chest stretch and contraction, fatiguing fast in a circuit context.', band:null, bench:'Decline 15–25°.' },
+    { name:'Single-Arm DB Row', meta:'8–10 reps each side per round', sets:0, trackWeight:true, startWeight:15,
+      how:'Three-point stance on the bench, row one arm at a time. In a circuit, alternate sides each round rather than doing both sides back to back to keep the round moving.',
+      feel:'Strong back contraction per side, building real fatigue by round 3.', band:null, bench:'Flat, one knee and hand on the bench.' },
+    { name:'Single-Leg Hip Thrust', meta:'8–10 reps each leg per round', sets:0, trackWeight:true, startWeight:8,
+      how:'Flat bench, one leg extended, drive the working hip up. Far more demanding per rep than the bilateral version, so expect to use much less weight.',
+      feel:'Intense single-side glute burn, building quickly across rounds.', band:null, bench:'Flat.' },
+    { name:'Side Plank', meta:'20–30 sec each side per round', sets:0, trackWeight:false,
+      how:'Forearm down, hips lifted into a straight diagonal line. Hold each side. A different core stimulus than the standard plank you did in Block A — targets your obliques directly.',
+      feel:'Outer core (obliques) burning on each side.', band:null, bench:null }
   ],
   cardio:{ label:'Treadmill Incline Walk', detail:'10–15 min · cool-down pace' }
 },
 {
   id:6, label:'Day 6', title:'CONDITIONING', subtitle:'Cardio + Core', color:'#47d4ff',
-  sections:[
-    { name:'Core Circuit · 3 Rounds', exercises:[
-      { name:'Plank', meta:'3 sets × 30–45 sec', sets:3,
-        how:'Forearms on floor, elbows under shoulders. Body flat — squeeze everything. Breathe steadily. Hold the full time even when it burns.',
-        feel:'Core and glutes burning. Shaking is fine.',
-        band:null },
-      { name:'Dead Bug', meta:'3 sets × 10 reps each side', sets:3,
-        how:'Lie on your back, arms straight up toward ceiling, knees bent at 90 degrees in the air (like a tabletop). <strong>Press your lower back INTO the floor — keep it there the whole time.</strong> Slowly lower your right arm overhead AND your left leg toward the floor simultaneously. Return and switch sides. That\'s one rep each side.',
-        feel:'Deep core working to keep your back pressed down. If your back lifts off the floor, you\'ve gone too far — reduce range of motion.',
-        band:null },
-      { name:'Bicycle Crunch', meta:'3 sets × 12–15 reps each side', sets:3,
-        how:'Lie on your back, hands behind your head lightly (don\'t pull your neck). Lift both feet off the ground, knees bent. Bring your right elbow toward your left knee while extending your right leg. Rotate the other way. <strong>Slow and controlled — focus on the rotation, not speed.</strong>',
-        feel:'Obliques (sides of your core) burning. Slow reps are 10x more effective than fast ones here.',
-        band:null },
-      { name:'Side Plank', meta:'3 sets × 20–30 sec each side', sets:3,
-        how:'Lie on your side, forearm on the ground, elbow under your shoulder. Stack your feet or stagger them for balance. Lift your hips off the ground so your body is a straight diagonal line. Hold.',
-        feel:'Outside of your core (obliques) working hard. If it\'s too hard, drop your bottom knee to the ground.',
-        band:null }
-    ]}
+  circuitLabel:'Core Circuit · 3 Rounds',
+  blockA:[
+    { name:'Plank', meta:'3 sets × 30–45 sec', sets:3, trackWeight:false,
+      how:'Forearms on floor, elbows under shoulders. Body flat — squeeze everything. Breathe steadily, hold the full duration.',
+      feel:'Core and glutes burning. Shaking is fine.', band:null, bench:null },
+    { name:'Decline Sit-Up', meta:'3 sets × 12–15 reps', sets:3, trackWeight:false,
+      how:'Bench on a slight decline, feet secured, hands lightly behind your head. Sit up fully, controlled descent back down.',
+      feel:'Deep ab contraction through the full sit-up range.', band:null, bench:'Decline, feet anchored.' },
+    { name:'Bicycle Crunch', meta:'3 sets × 12–15 reps each side', sets:3, trackWeight:false,
+      how:'On your back, hands lightly behind head. Lift feet off the ground, knees bent. Bring right elbow toward left knee while extending right leg, then rotate. Slow and controlled.',
+      feel:'Obliques burning. Slow reps are far more effective than fast ones.', band:null, bench:null },
+    { name:'Side Plank', meta:'3 sets × 20–30 sec each side', sets:3, trackWeight:false,
+      how:'On your side, forearm down, elbow under shoulder. Stack or stagger feet. Lift hips so your body forms a straight diagonal line. Hold.',
+      feel:'Outer core working hard. Drop the bottom knee down if too difficult.', band:null, bench:null }
+  ],
+  blockB:[
+    { name:'Mountain Climbers', meta:'3 sets × 30 sec', sets:3, trackWeight:false,
+      how:'Start in a plank position, hands under shoulders. Drive one knee toward your chest, then quickly switch legs in a running motion while keeping your hips low and core braced. Far more dynamic than a static plank.',
+      feel:'Core and hip flexors burning, plus a real cardio element from the speed — a different core stimulus than the static holds in Block A.', band:null, bench:null },
+    { name:'Incline DB Sit-Up', meta:'3 sets × 10–12 reps', sets:3, trackWeight:true, startWeight:5,
+      how:'Same setup as the decline sit-up but on a low incline instead, holding a light dumbbell against your chest. The incline plus added weight increases resistance through the sit-up compared to the bodyweight decline version.',
+      feel:'A heavier, more loaded ab contraction than the bodyweight version from Block A.', band:null, bench:'Low incline, dumbbell held at chest.' },
+    { name:'Russian Twist', meta:'3 sets × 16 reps total (8 each side)', sets:3, trackWeight:true, startWeight:8,
+      how:'Sit on the floor, knees bent, lean back slightly to engage your core, feet either on the floor or lifted for more difficulty. Hold one dumbbell with both hands. Rotate your torso to touch the dumbbell to the floor on one side, then the other.',
+      feel:'Obliques working through a rotational pattern — a different stimulus than the bicycle crunch from Block A, with added load.', band:null, bench:null },
+    { name:'Hollow Body Hold', meta:'3 sets × 20–30 sec', sets:3, trackWeight:false,
+      how:'Lie on your back, press your lower back into the floor, lift your shoulders and legs slightly off the ground simultaneously, arms extended overhead. Hold the position, keeping your lower back pinned down the entire time.',
+      feel:'Deep, full core engagement — often considered one of the most effective static core holds. A different challenge than the side plank.', band:null, bench:null }
   ],
   cardio:{ label:'Bike / Row / Walk', detail:'25–35 min steady state · conversational pace' }
 },
@@ -331,26 +518,78 @@ const DAYS = [
 }
 ];
 
-const WEEK_TIPS = [
-  'Learn the tempo. Feel every rep. Establish the mind-muscle connection.',
-  'Add 1 extra set to your main lifts. Slow the tempo even more — 4 sec down.',
-  'Add a stronger loop band OR cut rest time. Push your sets closer to failure.',
-  'Add burnout sets — last set of each exercise goes to near failure, then 5 slow pulses.'
-];
+const WEEK_TIPS = {
+  1:'Learn the tempo on each movement. Feel every rep before chasing weight.',
+  2:'Push weight up where it felt easy last week. Slow the eccentric even more — 4 sec down.',
+  3:'New exercise variations this week (Block B). Start a touch lighter while you learn the new movement patterns, then build back up.',
+  4:'Deload week — reduced weight and intensity on every lift. This isn\'t optional rest, it\'s how your body actually absorbs the last month of training. Trust the lighter weight.',
+  5:'Back to Block A movements, now at a higher weight than weeks 1–2. You should feel noticeably stronger than your first time through these.',
+  6:'Continue pushing weight on Block A. Add a band level or cut rest time where things feel too easy.',
+  7:'Back to Block B variations, heavier than weeks 3–4. These should feel much more familiar now.',
+  8:'Final deload — same rules as week 4. Lighter weight, no failure sets. End the 8 weeks recovered, not wrecked.'
+};
 
-const SK = 'recomp_v4';
+// ─── STATE / STORAGE ─────────────────────────────────────────────────
+const SK = 'recomp_v6';
 let ST = (() => { try { const r=localStorage.getItem(SK); if(r) return JSON.parse(r); } catch{} return {week:1,day:1,weeks:{}}; })();
-const emptyDay = () => ({exercises:{},sets:{},energy:null,difficulty:5,effort:null,win:'',cardio:false,restChecks:{},recovery:{}});
+const emptyDay = () => ({exercises:{},sets:{},weights:{},energy:null,difficulty:5,effort:null,win:'',cardio:false,restChecks:{},recovery:{}});
 const getKey = (w,d) => `w${w}d${d}`;
 const getDayData = (w,d) => { const k=getKey(w,d); if(!ST.weeks[k]) ST.weeks[k]=emptyDay(); return ST.weeks[k]; };
 const save = () => { try { localStorage.setItem(SK,JSON.stringify(ST)); } catch{} };
+
+// resolve which exercise list applies to a given day/week (handles warmup + block + circuit label)
+function getDayExercises(dayDef, week) {
+  const block = getBlock(week);
+  const main = block === 'A' ? (dayDef.blockA || []) : (dayDef.blockB || []);
+  return main;
+}
+function getAllSections(dayDef, week) {
+  const sections = [];
+  if (dayDef.warmup) sections.push({ name:'Warm-Up', exercises: dayDef.warmup });
+  const main = getDayExercises(dayDef, week);
+  const label = dayDef.circuitLabel || 'Main Work';
+  sections.push({ name: label, exercises: main });
+  return sections;
+}
 
 function isDayComplete(w,d) {
   const df=DAYS[d-1], data=getDayData(w,d);
   if(df.rest) return (df.restChecks||[]).every((_,i)=>data.restChecks[i]);
   if(df.recovery) return Object.values(data.recovery).some(Boolean);
-  const all=(df.sections||[]).flatMap(s=>s.exercises).filter(e=>e.name!=='Vibration Plate');
+  const sections = getAllSections(df, w);
+  const all = sections.flatMap(s=>s.exercises).filter(e=>e.name!=='Vibration Plate');
   return all.length>0 && all.every(e=>data.exercises[e.name]);
+}
+
+// find the most recent logged weight for an exercise (by name), searching backward
+function getLastWeight(exName, beforeWeek, beforeDay) {
+  for (let w = beforeWeek; w >= 1; w--) {
+    const maxDay = (w === beforeWeek) ? beforeDay - 1 : 7;
+    for (let d = maxDay; d >= 1; d--) {
+      const data = ST.weeks[getKey(w,d)];
+      if (data && data.weights && data.weights[exName] != null) return { weight: data.weights[exName], week: w };
+    }
+  }
+  return null;
+}
+
+// suggested weight for this week: bumps up on normal weeks, cuts to ~70-75% on deload weeks
+function getSuggestedWeight(exName, week, day, startWeight) {
+  const last = getLastWeight(exName, week, day);
+  if (!last) return startWeight;
+  if (isDeloadWeek(week)) {
+    // 70-75% of the last logged weight, snapped down to the nearest dumbbell you actually own
+    const target = last.weight * 0.725;
+    const candidates = DUMBBELLS.filter(w => w <= target);
+    return candidates.length ? candidates[candidates.length-1] : DUMBBELLS[0];
+  }
+  // coming off a deload week -> ramp back toward where they were pre-deload
+  if (DELOAD_WEEKS.includes(last.week)) {
+    // find weight from before that deload
+    const preDeload = getLastWeight(exName, last.week, 1);
+    if (preDeload) return preDeload.weight;
+  }
+  return last.weight; // hold steady as default; user bumps it themselves when ready
 }
 
 function showToast(msg) {
@@ -363,6 +602,7 @@ function showToast(msg) {
 function render() {
   document.getElementById('hdr-wk').textContent=ST.week;
   renderWeekDots();
+  renderBlockStrip();
   renderDayPills();
   renderContent();
 }
@@ -372,10 +612,21 @@ function renderWeekDots() {
   for(let w=1;w<=8;w++){
     const d=document.createElement('div');
     d.className='wk-dot';
+    if (isDeloadWeek(w)) d.classList.add('deload-wk');
     if(w===ST.week) d.classList.add('active');
     else if([1,2,3,4,5,6,7].every(dd=>isDayComplete(w,dd))) d.classList.add('done');
     d.onclick=()=>{ST.week=w;ST.day=1;save();render();};
     el.appendChild(d);
+  }
+}
+
+function renderBlockStrip() {
+  const el = document.getElementById('block-strip');
+  if (isDeloadWeek(ST.week)) {
+    el.innerHTML = `<span class="block-pill deload">⚡ DELOAD WEEK</span> Lighter weight, full recovery focus`;
+  } else {
+    const block = getBlock(ST.week);
+    el.innerHTML = `<span class="block-pill ${block}">BLOCK ${block}</span> ${block==='A' ? 'Baseline movements' : 'Rotated variations'} · Mesocycle ${ST.week<=4?'1':'2'} of 2`;
   }
 }
 
@@ -398,47 +649,60 @@ function renderDayPills() {
 function renderContent() {
   const def=DAYS[ST.day-1], data=getDayData(ST.week,ST.day), el=document.getElementById('content');
   el.innerHTML='';
-  const allEx=(def.sections||[]).flatMap(s=>s.exercises).filter(e=>e.name!=='Vibration Plate');
-  const doneEx=allEx.filter(e=>data.exercises[e.name]).length;
-  const pct=def.rest
-    ? (def.restChecks||[]).filter((_,i)=>data.restChecks[i]).length/(def.restChecks?.length||1)
-    : def.recovery ? (Object.values(data.recovery).some(Boolean)?1:0)
-    : allEx.length ? doneEx/allEx.length : 0;
-  const weekDone=[1,2,3,4,5,6,7].filter(d=>isDayComplete(ST.week,d)).length;
-  const r=22, circ=2*Math.PI*r;
+  const deload = isDeloadWeek(ST.week);
+  const block = getBlock(ST.week);
 
-  // Header
-  el.innerHTML+=`<div class="day-hdr">
-    <div>
-      <div class="day-title" style="color:${def.color}">${def.title}</div>
-      <div class="day-sub">${def.subtitle}</div>
-    </div>
-    <div class="ring-wrap">
-      <svg class="ring-svg" width="52" height="52">
-        <circle cx="26" cy="26" r="${r}" fill="none" stroke="#2a2a32" stroke-width="4"/>
-        <circle cx="26" cy="26" r="${r}" fill="none" stroke="${def.color}" stroke-width="4"
-          stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${circ-pct*circ}"
-          style="transition:stroke-dashoffset .4s"/>
-      </svg>
-      <div class="ring-text">${Math.round(pct*100)}%</div>
-    </div>
-  </div>`;
+  if (!def.rest && !def.recovery) {
+    const sections = getAllSections(def, ST.week);
+    const allEx = sections.flatMap(s=>s.exercises).filter(e=>e.name!=='Vibration Plate');
+    const doneEx = allEx.filter(e=>data.exercises[e.name]).length;
+    const pct = allEx.length ? doneEx/allEx.length : 0;
+    const weekDone=[1,2,3,4,5,6,7].filter(d=>isDayComplete(ST.week,d)).length;
+    const r=22, circ=2*Math.PI*r;
 
-  // Stats
-  el.innerHTML+=`<div class="stat-grid">
-    <div class="stat-card">
-      <div class="stat-val">${weekDone}/7</div>
-      <div class="stat-lbl">Week ${ST.week} Days</div>
-      <div class="prog-wrap"><div class="prog-fill" style="width:${(weekDone/7)*100}%"></div></div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" style="color:${def.color}">${doneEx}/${allEx.length||(def.restChecks?.length||0)}</div>
-      <div class="stat-lbl">Today Done</div>
-      <div class="prog-wrap"><div class="prog-fill" style="width:${pct*100}%;background:${def.color}"></div></div>
-    </div>
-  </div>`;
+    el.innerHTML+=`<div class="day-hdr">
+      <div>
+        <div class="day-title" style="color:${def.color}">${def.title}</div>
+        <div class="day-sub">${def.subtitle}</div>
+      </div>
+      <div class="ring-wrap">
+        <svg class="ring-svg" width="52" height="52">
+          <circle cx="26" cy="26" r="${r}" fill="none" stroke="#2a2a32" stroke-width="4"/>
+          <circle cx="26" cy="26" r="${r}" fill="none" stroke="${def.color}" stroke-width="4"
+            stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${circ-pct*circ}"
+            style="transition:stroke-dashoffset .4s"/>
+        </svg>
+        <div class="ring-text">${Math.round(pct*100)}%</div>
+      </div>
+    </div>`;
 
-  // REST DAY
+    el.innerHTML+=`<div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-val">${weekDone}/7</div>
+        <div class="stat-lbl">Week ${ST.week} Days</div>
+        <div class="prog-wrap"><div class="prog-fill" style="width:${(weekDone/7)*100}%"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:${def.color}">${doneEx}/${allEx.length}</div>
+        <div class="stat-lbl">Today Done</div>
+        <div class="prog-wrap"><div class="prog-fill" style="width:${pct*100}%;background:${def.color}"></div></div>
+      </div>
+    </div>`;
+
+    el.innerHTML+=`<div class="progress-toggle" onclick="openProgress()">📈 View Weight Progress</div>`;
+
+    if (deload) {
+      el.innerHTML+=`<div class="deload-banner">
+        <div class="deload-banner-title">⚡ DELOAD WEEK</div>
+        <div class="deload-banner-sub">Same exercises, much lighter weight (~70–75% of last week). No sets to failure. Suggested weights below are pre-calculated for you — trust them even though it feels easy. This is what lets the last month of training actually turn into muscle.</div>
+      </div>`;
+    } else if (ST.week === 3 || ST.week === 7) {
+      el.innerHTML+=`<div class="rotation-banner">🔄 <strong>New exercise rotation this week (Block B).</strong> Same muscle groups, different angles and movements to keep progressing. Weights reset slightly lower for new movements — that's expected, not a regression.</div>`;
+    } else if (ST.week === 5) {
+      el.innerHTML+=`<div class="rotation-banner">🔄 <strong>Back to Block A movements</strong> from weeks 1–2, now in your second mesocycle. You should be noticeably stronger this time through.</div>`;
+    }
+  }
+
   if(def.rest){
     el.innerHTML+=`<div class="rest-card">
       <div style="font-size:48px;margin-bottom:12px">😴</div>
@@ -448,63 +712,67 @@ function renderContent() {
     <div class="sec-lbl">Rest Day Checklist</div>`;
     def.restChecks.forEach((item,i)=>{
       const chk=!!data.restChecks[i];
-      el.innerHTML+=`<div class="ex-row${chk?' checked':''}" onclick="toggleRest(${i})">
+      el.innerHTML+=`<div class="ex-row${chk?' checked':''}"><div class="ex-top" onclick="toggleRest(${i})">
         <div class="chk-box"><span class="chk-icon">✓</span></div>
         <div class="ex-info"><div class="ex-name">${item}</div></div>
-      </div>`;
+      </div></div>`;
     });
     renderPerfLog(el,data);
     return;
   }
 
-  // RECOVERY DAY
   if(def.recovery){
     el.innerHTML+=`<div class="sec-lbl">Choose 1–2 Activities</div>`;
     def.recovery.forEach((item,i)=>{
       const chk=!!data.recovery[i];
-      el.innerHTML+=`<div class="ex-row${chk?' checked':''}" onclick="toggleRecovery(${i})">
+      el.innerHTML+=`<div class="ex-row${chk?' checked':''}"><div class="ex-top" onclick="toggleRecovery(${i})">
         <div class="chk-box"><span class="chk-icon">✓</span></div>
         <div class="ex-info">
           <div class="ex-name">${item.label}</div>
           <div class="ex-detail">${item.detail}</div>
         </div>
-      </div>`;
+      </div></div>`;
     });
     renderPerfLog(el,data);
     return;
   }
 
   // ENERGY
-  const eMap={low:['sel-low','rgba(255,71,87,.15)','#ff4757'],medium:['sel-medium','rgba(255,107,53,.15)','#ff6b35'],high:['sel-high','rgba(232,255,71,.15)','#e8ff47']};
+  const eMap={low:['rgba(255,71,87,.15)','#ff4757'],medium:['rgba(255,107,53,.15)','#ff6b35'],high:['rgba(232,255,71,.15)','#e8ff47']};
   el.innerHTML+=`<div style="margin-top:14px">
     <div class="energy-lbl">Today's Energy</div>
     <div class="energy-bar">
       ${['low','medium','high'].map(v=>{
-        const sel=data.energy===v, [cls,bg,col]=eMap[v];
+        const sel=data.energy===v, [bg,col]=eMap[v];
         return `<button class="energy-btn" style="${sel?`background:${bg};border-color:${col};color:${col}`:''}" onclick="setEnergy('${v}')">${v==='low'?'🔴 Low':v==='medium'?'🟠 Medium':'🟢 High'}</button>`;
       }).join('')}
     </div>
   </div>`;
 
+  // DUMBBELL LEGEND
+  el.innerHTML+=`<div class="sec-lbl">Your Dumbbells</div>
+  <div class="db-legend">
+    ${DUMBBELLS.map(w=>`<div class="db-card"><div class="db-w">${w}</div><div class="db-u">lb</div></div>`).join('')}
+  </div>`;
+
   // BAND LEGEND
   el.innerHTML+=`<div class="sec-lbl">Loop Band Guide</div>
   <div class="band-legend">
-    <div class="band-row">
-      <div class="band-dot" style="background:#a8e063"></div>
-      <div class="band-info"><div class="band-name">Light Band</div><div class="band-use">Warm-ups, glute activation, mobility. Barely any resistance.</div></div>
-    </div>
-    <div class="band-row">
-      <div class="band-dot" style="background:#f7dc6f"></div>
-      <div class="band-info"><div class="band-name">Medium Band — Main Workhorse</div><div class="band-use">Squats, rows, side steps, tricep extensions. Feel it in 12–20 reps.</div></div>
-    </div>
-    <div class="band-row">
-      <div class="band-dot" style="background:#e74c3c"></div>
-      <div class="band-info"><div class="band-name">Heavy Band — Glute Builder</div><div class="band-use">Hip thrusts, glute bridges, lat pulldowns. Hard from the first 5 reps.</div></div>
-    </div>
+    <div class="band-row"><div class="band-dot" style="background:#a8e063"></div>
+      <div class="band-info"><div class="band-name">X-Light</div><div class="band-use">Warm-ups, mobility only.</div></div></div>
+    <div class="band-row"><div class="band-dot" style="background:#f7dc6f"></div>
+      <div class="band-info"><div class="band-name">Light</div><div class="band-use">Triceps work, light activation.</div></div></div>
+    <div class="band-row"><div class="band-dot" style="background:#e67e22"></div>
+      <div class="band-info"><div class="band-name">Medium — Main Workhorse</div><div class="band-use">Squats, lateral walks, lat pulldowns.</div></div></div>
+    <div class="band-row"><div class="band-dot" style="background:#e74c3c"></div>
+      <div class="band-info"><div class="band-name">Heavy — Glute Builder</div><div class="band-use">Hip thrusts, advanced lateral walks.</div></div></div>
+    <div class="band-row"><div class="band-dot" style="background:#8e44ad"></div>
+      <div class="band-info"><div class="band-name">X-Heavy — Advanced</div><div class="band-use">Hip thrusts in weeks 5–8 once Heavy is easy.</div></div></div>
   </div>`;
 
   // SECTIONS
-  def.sections.forEach(sec=>{
+  const sections = getAllSections(def, ST.week);
+  sections.forEach(sec=>{
     el.innerHTML+=`<div class="sec-lbl">${sec.name}</div>`;
     sec.exercises.forEach(ex=>{
       const chk=!!data.exercises[ex.name], sc=data.sets[ex.name]||0;
@@ -515,25 +783,77 @@ function renderContent() {
         for(let s=0;s<ex.sets;s++) dots+=`<div class="set-dot${s<sc?' done':''}" onclick="event.stopPropagation();toggleSet('${ex.name}',${s},${ex.sets})"></div>`;
         dots+='</div>';
       }
-      el.innerHTML+=`<div class="ex-row${chk?' checked':''}" onclick="toggleExercise('${ex.name}',${ex.sets})">
-        <div class="chk-box"><span class="chk-icon">✓</span></div>
-        <div class="ex-info">
-          <div class="ex-name">${ex.name}</div>
-          <div class="ex-meta">${ex.meta}</div>
-          ${ex.detail?`<div class="ex-detail">${ex.detail}</div>`:''}
-          <button class="howto-btn" onclick="event.stopPropagation();toggleHow('${uid}')">▸ How to do it</button>
-          <div class="howto-panel" id="${uid}">
-            <p>${ex.how}</p>
-            <div class="feel">✓ <strong>You should feel:</strong> ${ex.feel}</div>
-            ${ex.band?`<div class="band-note">🔵 <strong>Loop band:</strong> ${ex.band}</div>`:''}
+
+      const isNewThisWeek = (ST.week===3 || ST.week===7) && (def.blockB||[]).includes(ex);
+
+      let weightLogHtml = '';
+      if (ex.trackWeight) {
+        const currentWeight = data.weights[ex.name] != null ? data.weights[ex.name] : null;
+        const lastInfo = getLastWeight(ex.name, ST.week, ST.day);
+        const suggested = getSuggestedWeight(ex.name, ST.week, ST.day, ex.startWeight);
+        const displayWeight = currentWeight != null ? currentWeight : suggested;
+
+        let trendHtml = '';
+        if (!lastInfo) {
+          trendHtml = `<span class="weight-trend first">First log</span>`;
+        } else if (deload) {
+          trendHtml = `<span class="weight-trend deload-trend">⚡ Deload</span>`;
+        } else if (displayWeight > lastInfo.weight) {
+          trendHtml = `<span class="weight-trend up">↑ +${displayWeight-lastInfo.weight}lb</span>`;
+        } else if (displayWeight === lastInfo.weight) {
+          trendHtml = `<span class="weight-trend same">Same as last</span>`;
+        } else {
+          trendHtml = `<span class="weight-trend deload-trend">↓ ${lastInfo.weight-displayWeight}lb</span>`;
+        }
+
+        let suggestRow = '';
+        if (currentWeight == null && lastInfo) {
+          if (deload) {
+            suggestRow = `<div class="weight-suggest-row">⚡ Suggested deload weight: <strong>${suggested}lb</strong> (~70–75% of last)</div>`;
+          } else if (DELOAD_WEEKS.includes(lastInfo.week) && !deload) {
+            suggestRow = `<div class="weight-suggest-row">📈 Ramping back up from deload — suggested: <strong>${suggested}lb</strong></div>`;
+          }
+        }
+
+        weightLogHtml = `<div class="weight-log" onclick="event.stopPropagation()">
+          <div class="weight-log-hdr">
+            <div class="weight-log-lbl">Weight Used</div>
+            ${trendHtml}
           </div>
+          <div class="weight-input-row">
+            <div class="weight-stepper">
+              <button class="weight-step-btn" onclick="adjustWeight('${ex.name}',-1)">−</button>
+              <div class="weight-val-box">${displayWeight}</div>
+              <button class="weight-step-btn" onclick="adjustWeight('${ex.name}',1)">+</button>
+            </div>
+            <div class="weight-unit">lb / hand</div>
+            ${lastInfo!=null?`<div class="weight-last">Last: ${lastInfo.weight}lb</div>`:''}
+          </div>
+          ${suggestRow}
+        </div>`;
+      }
+
+      el.innerHTML+=`<div class="ex-row${chk?' checked':''}${deload?' deload-row':''}">
+        <div class="ex-top" onclick="toggleExercise('${ex.name}',${ex.sets})">
+          <div class="chk-box"><span class="chk-icon">✓</span></div>
+          <div class="ex-info">
+            <div class="ex-name">${ex.name}${isNewThisWeek?'<span class="ex-new-badge">NEW</span>':''}</div>
+            <div class="ex-meta">${ex.meta}</div>
+            <button class="howto-btn" onclick="event.stopPropagation();toggleHow('${uid}')">▸ How to do it</button>
+          </div>
+          ${dots}
         </div>
-        ${dots}
+        <div class="howto-panel" id="${uid}">
+          <p>${ex.how}</p>
+          <div class="feel">✓ <strong>You should feel:</strong> ${ex.feel}</div>
+          ${ex.band?`<div class="band-note">🔵 <strong>Band:</strong> ${ex.band}</div>`:''}
+          ${ex.bench?`<div class="bench-note">🟠 <strong>Bench setup:</strong> ${ex.bench}</div>`:''}
+        </div>
+        ${weightLogHtml}
       </div>`;
     });
   });
 
-  // CARDIO
   if(def.cardio){
     el.innerHTML+=`<div class="sec-lbl">Cardio Finisher</div>
     <div class="cardio-row" onclick="toggleCardio()">
@@ -547,9 +867,7 @@ function renderContent() {
     </div>`;
   }
 
-  // TIP
-  const tipIdx=Math.min(Math.floor((ST.week-1)/2),3);
-  el.innerHTML+=`<div class="tip-box">📈 <strong>Week ${ST.week} Focus:</strong> ${WEEK_TIPS[tipIdx]}</div>`;
+  el.innerHTML+=`<div class="tip-box">📈 <strong>Week ${ST.week} Focus:</strong> ${WEEK_TIPS[ST.week]}</div>`;
 
   renderPerfLog(el,data);
 }
@@ -576,12 +894,68 @@ function renderPerfLog(el,data){
   </div>`;
 }
 
+// ─── WEIGHT PROGRESS MODAL ──────────────────────────────────────────
+function openProgress() {
+  const def = DAYS[ST.day-1];
+  const body = document.getElementById('progress-body');
+  body.innerHTML = '';
+
+  // collect every unique tracked exercise name that has ever appeared on this day (across both blocks)
+  const namesSeen = new Set();
+  const exMap = {}; // name -> exercise def (first one found)
+  [1,2,3,4,5,6,7,8].forEach(w=>{
+    getDayExercises(def, w).forEach(ex=>{
+      if (ex.trackWeight && !namesSeen.has(ex.name)) { namesSeen.add(ex.name); exMap[ex.name]=ex; }
+    });
+  });
+
+  if (namesSeen.size === 0) {
+    body.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:40px 0">No weight-tracked exercises on this day.</div>';
+  } else {
+    Array.from(namesSeen).forEach(name => {
+      const ex = exMap[name];
+      const weeklyWeights = [];
+      for (let w = 1; w <= 8; w++) {
+        const data = ST.weeks[getKey(w, ST.day)];
+        const wt = data && data.weights ? data.weights[name] : null;
+        weeklyWeights.push(wt);
+      }
+      const loggedVals = weeklyWeights.filter(v => v != null);
+      const maxW = loggedVals.length ? Math.max(...loggedVals, ex.startWeight) : ex.startWeight;
+      const firstLogged = loggedVals[0];
+      const lastLogged = loggedVals[loggedVals.length - 1];
+      const gain = (firstLogged != null && lastLogged != null) ? lastLogged - firstLogged : null;
+
+      let bars = '';
+      weeklyWeights.forEach((wt, i) => {
+        const wkNum = i+1;
+        const isDel = isDeloadWeek(wkNum);
+        const h = wt != null ? Math.max(8, (wt / maxW) * 56) : 4;
+        bars += `<div class="ex-progress-bar${wt!=null?' has-data':''}${isDel?' deload-bar':''}" style="height:${h}px" title="Week ${wkNum}: ${wt!=null?wt+'lb':'—'}"></div>`;
+      });
+      let labels = weeklyWeights.map((_,i)=>`<span>${i+1}</span>`).join('');
+
+      body.innerHTML += `<div class="ex-progress-card">
+        <div class="ex-progress-name">${name}</div>
+        <div class="ex-progress-chart">${bars}</div>
+        <div class="ex-progress-labels">${labels}</div>
+        ${gain != null ? `<div class="ex-progress-summary">${gain > 0 ? `<strong>+${gain}lb</strong> since first logged` : gain === 0 ? 'Holding steady' : `<strong>${gain}lb</strong> since first logged (normal if this includes a deload week)`}</div>` : `<div class="ex-progress-summary">Log a weight to start tracking</div>`}
+      </div>`;
+    });
+  }
+
+  document.getElementById('progress-modal').classList.add('open');
+}
+function closeProgress() {
+  document.getElementById('progress-modal').classList.remove('open');
+}
+
 // ─── ACTIONS ─────────────────────────────────────────────────────────
 function toggleHow(uid){
   const p=document.getElementById(uid);
-  const btn=p.previousElementSibling;
   p.classList.toggle('open');
-  btn.textContent=p.classList.contains('open')?'▾ How to do it':'▸ How to do it';
+  const btn=p.parentElement.querySelector('.howto-btn');
+  if(btn) btn.textContent = p.classList.contains('open') ? '▾ How to do it' : '▸ How to do it';
 }
 function toggleExercise(name,sets){
   const d=getDayData(ST.week,ST.day);
@@ -604,6 +978,29 @@ function setEnergy(v){ getDayData(ST.week,ST.day).energy=v; save(); render(); }
 function setDifficulty(v){ getDayData(ST.week,ST.day).difficulty=parseInt(v); document.getElementById('diff-val').textContent=v; save(); }
 function setEffort(v){ getDayData(ST.week,ST.day).effort=v; save(); render(); }
 function setWin(v){ getDayData(ST.week,ST.day).win=v; save(); }
+
+function adjustWeight(name, direction) {
+  const d = getDayData(ST.week, ST.day);
+  const def = DAYS[ST.day-1];
+  const allEx = getDayExercises(def, ST.week).concat(def.warmup||[]);
+  const ex = allEx.find(e=>e.name===name);
+  const suggested = getSuggestedWeight(name, ST.week, ST.day, ex.startWeight);
+  const current = d.weights[name] != null ? d.weights[name] : suggested;
+  // step through actual dumbbell sizes you own; direction is +1 or -1
+  const idx = DUMBBELLS.indexOf(current);
+  let next;
+  if (idx === -1) {
+    // current value isn't an exact dumbbell size (e.g. a deload-rounded number) -- snap to nearest, then step
+    let nearestIdx = 0, nearestDiff = Infinity;
+    DUMBBELLS.forEach((w,i)=>{ const diff=Math.abs(w-current); if(diff<nearestDiff){nearestDiff=diff;nearestIdx=i;} });
+    next = DUMBBELLS[Math.max(0, Math.min(DUMBBELLS.length-1, nearestIdx + (direction>0?0:-1)))];
+  } else {
+    const newIdx = Math.max(0, Math.min(DUMBBELLS.length-1, idx + direction));
+    next = DUMBBELLS[newIdx];
+  }
+  d.weights[name] = next;
+  save(); render();
+}
 
 // ─── NAV ─────────────────────────────────────────────────────────────
 document.getElementById('btn-nd').onclick=()=>{
